@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { ShoppingCart, Menu, X, Heart, ClipboardList, Search, PenLine, Trash2 } from "lucide-react";
 import Footer from "./Footer";
 import { Link, useNavigate } from 'react-router-dom';
@@ -28,7 +28,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
   };
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       {/* Top Navigation - Social Media Bar */}
       <div className="w-full bg-primary py-2 text-sm text-white">
         <div className="container mx-auto flex items-center justify-between px-4">
@@ -158,7 +158,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
       </nav>
 
       {/* Main content */}
-      <main className="min-h-screen">
+      <main className="flex-grow">
         {children}
       </main>
 

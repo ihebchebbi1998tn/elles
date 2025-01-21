@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Layout } from "../components/Layout";
 import { HeroSection } from "../components/HeroSection";
 import ProductGrid from "../components/ProductGrid";
 import AboutSection from "../components/AboutSection";
@@ -10,7 +9,7 @@ const Index = () => {
   const [cartCount, setCartCount] = useState(0);
 
   return (
-    <Layout>
+    <>
       <HeroSection />
 
       {/* Products Section */}
@@ -29,7 +28,7 @@ const Index = () => {
 
       {/* FAQ Section */}
       <FAQ />
-    </Layout>
+    </>
   );
 };
 

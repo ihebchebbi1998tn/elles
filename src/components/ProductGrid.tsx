@@ -21,7 +21,7 @@ const defaultProducts = [
     name: "Blouse Médicale Premium",
     price: "89,99 €",
     description: "Blouse médicale professionnelle, confortable et durable. Idéale pour les professionnels de santé.",
-    image: "https://images.unsplash.com/photo-1584982751601-97dcc096659c?w=800",
+    image: "https://placehold.co/800x800",
     category: "Blouses",
   },
   {
@@ -29,7 +29,7 @@ const defaultProducts = [
     name: "Uniforme Infirmier Elite",
     price: "79,99 €",
     description: "Uniforme complet pour infirmiers, design ergonomique et tissu respirant.",
-    image: "https://images.unsplash.com/photo-1576091160550-2173dba999ef?w=800",
+    image: "https://placehold.co/800x800",
     category: "Uniformes",
   },
   {
@@ -37,7 +37,7 @@ const defaultProducts = [
     name: "Tenue de Bloc Premium",
     price: "99,99 €",
     description: "Tenue complète pour bloc opératoire, stérile et confortable.",
-    image: "https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=800",
+    image: "https://placehold.co/800x800",
     category: "Tenues Spécialisées",
   },
   {
@@ -45,7 +45,7 @@ const defaultProducts = [
     name: "Blouse de Laboratoire",
     price: "94,99 €",
     description: "Blouse professionnelle pour laboratoire, protection optimale.",
-    image: "https://images.unsplash.com/photo-1584982751601-97dcc096659c?w=800",
+    image: "https://placehold.co/800x800",
     category: "Blouses",
   },
 ];

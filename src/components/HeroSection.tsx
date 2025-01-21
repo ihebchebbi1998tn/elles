@@ -18,7 +18,7 @@ export const HeroSection = () => {
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ease-out"
         style={{
-          backgroundImage: 'url("https://www.blacksocks.com/cdn/shop/files/Dresscode-All-1920x1080-Pages-Hero.png?v=1704792596&width=1920")',
+          backgroundImage: 'url("https://placehold.co/1920x1080")',
           transform: `translateY(${scrollY * 0.5}px)`,
         }}
       />

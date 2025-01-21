@@ -7,7 +7,7 @@ const reviews = [
     role: "Médecin Généraliste",
     rating: 5,
     comment: "La qualité des blouses est exceptionnelle. Je les porte quotidiennement et elles restent impeccables.",
-    image: "https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=400"
+    image: "https://placehold.co/400x400"
   },
   {
     id: 2,
@@ -15,7 +15,7 @@ const reviews = [
     role: "Infirmier",
     rating: 5,
     comment: "Le confort est incomparable. Ces uniformes sont parfaits pour les longues journées de travail.",
-    image: "https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=400"
+    image: "https://placehold.co/400x400"
   },
   {
     id: 3,
@@ -23,7 +23,7 @@ const reviews = [
     role: "Technicienne de Laboratoire",
     rating: 5,
     comment: "Service client excellent et produits de grande qualité. Je recommande vivement.",
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400"
+    image: "https://placehold.co/400x400"
   }
 ];
 

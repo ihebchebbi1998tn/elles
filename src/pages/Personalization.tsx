@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import LoadingScreen from '../components/LoadingScreen';
+import { Layout } from '../components/Layout';
 
 const Personalization = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -17,12 +18,14 @@ const Personalization = () => {
   }
 
   return (
-    <div className="container mx-auto min-h-screen p-8">
-      <h1 className="mb-8 text-4xl font-bold">Personnalisation</h1>
-      <div className="rounded-lg border border-gray-200 p-6 shadow-sm">
-        <p className="text-gray-600">Content coming soon...</p>
+    <Layout>
+      <div className="container mx-auto min-h-screen p-8">
+        <h1 className="mb-8 text-4xl font-bold">Personnalisation</h1>
+        <div className="rounded-lg border border-gray-200 p-6 shadow-sm">
+          <p className="text-gray-600">Content coming soon...</p>
+        </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

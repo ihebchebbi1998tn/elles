@@ -5,7 +5,7 @@ const AboutSection = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="relative h-[400px] rounded-lg overflow-hidden">
             <img
-              src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800"
+              src="https://placehold.co/800x400"
               alt="Notre Histoire"
               className="absolute inset-0 w-full h-full object-cover"
             />

@@ -2,7 +2,8 @@ import { useEffect, useRef } from "react";
 import { Canvas, Text, Rect } from "fabric";
 import { Card } from "@/components/ui/card";
 import { X } from "lucide-react";
-import { productZones } from "./types/productZones";
+import { productZoneConfigs } from "./config/zoneConfig";
+import { toast } from "sonner";
 
 interface CanvasContainerProps {
   canvas: Canvas | null;
@@ -26,6 +27,30 @@ const CanvasContainer = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const deleteButtonRef = useRef<HTMLButtonElement>(null);
 
+  // Handle showing/hiding delete button
+  const updateDeleteButton = (target: any) => {
+    if (!deleteButtonRef.current || !canvas || !canvas.lowerCanvasEl) return;
+    
+    if (target) {
+      const bound = target.getBoundingRect();
+      const offset = canvas.calcOffset();
+      
+      // Position the delete button relative to the canvas container
+      const canvasContainer = canvas.lowerCanvasEl.parentElement;
+      if (!canvasContainer) return;
+      
+      const canvasRect = canvasContainer.getBoundingClientRect();
+      const buttonLeft = bound.left + bound.width - 12;
+      const buttonTop = bound.top - 12;
+      
+      deleteButtonRef.current.style.display = 'flex';
+      deleteButtonRef.current.style.left = `${buttonLeft}px`;
+      deleteButtonRef.current.style.top = `${buttonTop}px`;
+    } else {
+      deleteButtonRef.current.style.display = 'none';
+    }
+  };
+
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -40,36 +65,34 @@ const CanvasContainer = ({
     });
 
     // Find the selected product zone
-    const productZone = productZones.find(zone => zone.id === selectedCategory);
+    const productZone = productZoneConfigs.find(zone => zone.id === selectedCategory);
 
     if (productZone) {
-      // Create a clipping rectangle for the customization zone
       const clipRect = new Rect({
         width: productZone.zone.width,
         height: productZone.zone.height,
         left: productZone.zone.left,
         top: productZone.zone.top,
         absolutePositioned: true,
-        fill: 'transparent',
-        stroke: '#000000',
-        strokeWidth: 2,
-        strokeDashArray: [5, 5],
+        fill: productZone.zone.backgroundColor,
+        stroke: productZone.zone.borderColor,
+        strokeWidth: productZone.zone.borderWidth,
+        strokeDashArray: productZone.zone.borderStyle === 'dashed' ? [5, 5] : undefined,
         selectable: false,
         evented: false,
       });
 
       fabricCanvas.clipPath = clipRect;
       
-      // Add a visible border rectangle
       const borderRect = new Rect({
         width: productZone.zone.width,
         height: productZone.zone.height,
         left: productZone.zone.left,
         top: productZone.zone.top,
         fill: 'transparent',
-        stroke: '#000000',
-        strokeWidth: 2,
-        strokeDashArray: [5, 5],
+        stroke: productZone.zone.borderColor,
+        strokeWidth: productZone.zone.borderWidth,
+        strokeDashArray: productZone.zone.borderStyle === 'dashed' ? [5, 5] : undefined,
         selectable: false,
         evented: false,
       });
@@ -77,7 +100,6 @@ const CanvasContainer = ({
       fabricCanvas.add(borderRect);
       fabricCanvas.sendObjectToBack(borderRect);
 
-      // Initialize placeholder text within the zone
       const placeholderText = new Text("Tapez votre texte ici...", {
         left: productZone.zone.left + productZone.zone.width / 2,
         top: productZone.zone.top + productZone.zone.height / 2,
@@ -93,25 +115,34 @@ const CanvasContainer = ({
       fabricCanvas.add(placeholderText);
     }
 
-    // Add object movement constraints
+    // Add object selection event handlers
+    fabricCanvas.on('selection:created', (e) => {
+      updateDeleteButton(e.selected?.[0]);
+    });
+
+    fabricCanvas.on('selection:updated', (e) => {
+      updateDeleteButton(e.selected?.[0]);
+    });
+
+    fabricCanvas.on('selection:cleared', () => {
+      updateDeleteButton(null);
+    });
+
     fabricCanvas.on('object:moving', (e) => {
       const obj = e.target;
       if (!obj || !productZone) return;
 
-      const objBounds = obj.getBoundingRect(true, true);
+      const objBounds = obj.getBoundingRect();
       const zone = productZone.zone;
 
-      // Calculate the object's center position
       const objCenterX = objBounds.left + objBounds.width / 2;
       const objCenterY = objBounds.top + objBounds.height / 2;
 
-      // Calculate zone boundaries
       const zoneLeft = zone.left;
       const zoneRight = zone.left + zone.width;
       const zoneTop = zone.top;
       const zoneBottom = zone.top + zone.height;
 
-      // Adjust position to keep the object within bounds
       if (objBounds.left < zoneLeft) {
         obj.set('left', obj.left + (zoneLeft - objBounds.left));
       }
@@ -125,22 +156,20 @@ const CanvasContainer = ({
         obj.set('top', obj.top - ((objBounds.top + objBounds.height) - zoneBottom));
       }
 
+      updateDeleteButton(obj);
       fabricCanvas.renderAll();
     });
 
-    // Add scaling constraints
     fabricCanvas.on('object:scaling', (e) => {
       const obj = e.target;
       if (!obj || !productZone) return;
 
-      const objBounds = obj.getBoundingRect(true, true);
+      const objBounds = obj.getBoundingRect();
       const zone = productZone.zone;
       
-      // Store current scale
       const currentScaleX = obj.scaleX || 1;
       const currentScaleY = obj.scaleY || 1;
 
-      // Check if the scaled object is within bounds
       const isWithinBounds = 
         objBounds.left >= zone.left &&
         objBounds.top >= zone.top &&
@@ -148,7 +177,6 @@ const CanvasContainer = ({
         objBounds.top + objBounds.height <= zone.top + zone.height;
 
       if (!isWithinBounds) {
-        // If object goes outside bounds, revert to previous valid scale
         if (typeof obj.get('lastScaleX') === 'number') {
           obj.set('scaleX', obj.get('lastScaleX'));
         }
@@ -156,11 +184,11 @@ const CanvasContainer = ({
           obj.set('scaleY', obj.get('lastScaleY'));
         }
       } else {
-        // Store current scale as last valid scale
         obj.set('lastScaleX', currentScaleX);
         obj.set('lastScaleY', currentScaleY);
       }
       
+      updateDeleteButton(obj);
       fabricCanvas.renderAll();
     });
 
@@ -175,7 +203,7 @@ const CanvasContainer = ({
   useEffect(() => {
     if (!canvas || !selectedCategory) return;
 
-    const productZone = productZones.find(zone => zone.id === selectedCategory);
+    const productZone = productZoneConfigs.find(zone => zone.id === selectedCategory);
     if (!productZone) return;
 
     const existingTexts = canvas.getObjects().filter(obj => obj instanceof Text);
@@ -219,6 +247,18 @@ const CanvasContainer = ({
     canvas.renderAll();
   }, [text, canvas, selectedFont, selectedCategory]);
 
+  const handleDeleteClick = () => {
+    if (!canvas) return;
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      canvas.remove(activeObject);
+      canvas.renderAll();
+      updateDeleteButton(null);
+      onObjectDelete();
+      toast.success("Élément supprimé");
+    }
+  };
+
   return (
     <Card className="p-4 lg:p-6">
       <div className="w-full flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden relative min-h-[600px]">
@@ -228,16 +268,16 @@ const CanvasContainer = ({
         />
         <button
           ref={deleteButtonRef}
-          onClick={onObjectDelete}
-          className="absolute hidden bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition-colors w-6 h-6 flex items-center justify-center"
+          onClick={handleDeleteClick}
+          className="absolute hidden items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 cursor-pointer shadow-lg transition-colors"
           style={{
             zIndex: 1000,
-            right: '10px',
-            top: '10px',
-            padding: 0,
+            transform: 'translate(50%, -50%)',
+            display: 'none', // Initially hidden
           }}
+          aria-label="Delete item"
         >
-          <X className="h-4 w-4" />
+          <X className="h-5 w-5" />
         </button>
       </div>
     </Card>

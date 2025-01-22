@@ -40,12 +40,14 @@ const CanvasContainer = ({
       if (!canvasContainer) return;
       
       const canvasRect = canvasContainer.getBoundingClientRect();
-      const buttonLeft = bound.left + bound.width - 12;
+      const buttonLeft = bound.left + bound.width;
       const buttonTop = bound.top - 12;
       
-      deleteButtonRef.current.style.display = 'flex';
+      deleteButtonRef.current.style.display = 'block';
       deleteButtonRef.current.style.left = `${buttonLeft}px`;
       deleteButtonRef.current.style.top = `${buttonTop}px`;
+      deleteButtonRef.current.style.zIndex = '1000';
+      deleteButtonRef.current.style.opacity = '1';
     } else {
       deleteButtonRef.current.style.display = 'none';
     }
@@ -269,11 +271,11 @@ const CanvasContainer = ({
         <button
           ref={deleteButtonRef}
           onClick={handleDeleteClick}
-          className="absolute hidden items-center justify-center bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 cursor-pointer shadow-lg transition-colors"
+          className="absolute bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 cursor-pointer shadow-lg transition-colors flex items-center justify-center"
           style={{
-            zIndex: 1000,
+            display: 'none',
+            position: 'absolute',
             transform: 'translate(50%, -50%)',
-            display: 'none', // Initially hidden
           }}
           aria-label="Delete item"
         >

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Coffee, Shirt, Briefcase, Newspaper, Book, ShoppingBag } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -9,7 +9,14 @@ import CanvasContainer from "@/components/personalization/CanvasContainer";
 import DesignTools from "@/components/personalization/DesignTools";
 import ImageUploader from "@/components/personalization/ImageUploader";
 import UploadedImagesList from "@/components/personalization/UploadedImagesList";
+import ContentSection from "@/components/personalization/ContentSection";
 import { Canvas, Text } from "fabric";
+
+interface ContentItem {
+  id: string;
+  type: 'text' | 'image';
+  content: string;
+}
 
 const productCategories: ProductCategory[] = [
   { id: 'mugs', name: 'Tasses', icon: Coffee },
@@ -28,7 +35,57 @@ const Personalization = () => {
   const [activeText, setActiveText] = useState<Text | null>(null);
   const [uploadedImages, setUploadedImages] = useState<UploadedImage[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [contentItems, setContentItems] = useState<ContentItem[]>(() => {
+    const cached = localStorage.getItem('personalization-content');
+    return cached ? JSON.parse(cached) : [];
+  });
   const isMobile = useIsMobile();
+
+  useEffect(() => {
+    localStorage.setItem('personalization-content', JSON.stringify(contentItems));
+  }, [contentItems]);
+
+  const handleAddText = (newText: string) => {
+    const newItem: ContentItem = {
+      id: Date.now().toString(),
+      type: 'text',
+      content: newText
+    };
+    setContentItems(prev => [...prev, newItem]);
+  };
+
+  const handleAddImage = (image: UploadedImage) => {
+    const newItem: ContentItem = {
+      id: image.id,
+      type: 'image',
+      content: image.name
+    };
+    setContentItems(prev => [...prev, newItem]);
+  };
+
+  const handleDeleteItem = (id: string) => {
+    setContentItems(prev => prev.filter(item => item.id !== id));
+    handleDeleteActiveObject();
+  };
+
+  const handleSelectItem = (id: string) => {
+    if (!canvas) return;
+    const item = contentItems.find(i => i.id === id);
+    if (!item) return;
+
+    const fabricObject = canvas.getObjects().find(obj => {
+      if (item.type === 'text') {
+        return obj.type === 'text' && (obj as Text).text === item.content;
+      } else {
+        return obj.type === 'image' && (obj as any)._element?.src.includes(item.content);
+      }
+    });
+
+    if (fabricObject) {
+      canvas.setActiveObject(fabricObject);
+      canvas.renderAll();
+    }
+  };
 
   const handleDeleteActiveObject = () => {
     if (!canvas) return;
@@ -51,10 +108,6 @@ const Personalization = () => {
     }
   };
 
-  const handleDeleteImage = (imageToDelete: UploadedImage) => {
-    setUploadedImages(prev => prev.filter(img => img.id !== imageToDelete.id));
-  };
-
   return (
     <div className="container mx-auto py-6 px-4 lg:py-12 max-w-[100vw] overflow-x-hidden">
       <div className="max-w-7xl mx-auto">
@@ -71,6 +124,13 @@ const Personalization = () => {
               selectedCategory={selectedCategory}
               onCategorySelect={setSelectedCategory}
             />
+            <div className="mt-4">
+              <ContentSection
+                items={contentItems}
+                onDeleteItem={handleDeleteItem}
+                onSelectItem={handleSelectItem}
+              />
+            </div>
           </div>
 
           {/* Canvas Area */}
@@ -100,6 +160,7 @@ const Personalization = () => {
                   activeText={activeText}
                   canvas={canvas}
                   fonts={fonts}
+                  onAddText={handleAddText}
                 />
               </div>
 
@@ -108,12 +169,12 @@ const Personalization = () => {
                   <ImageUploader
                     canvas={canvas}
                     onImageUpload={(image) => {
-                      setUploadedImages(prev => [...prev, image]);
+                      handleAddImage(image);
                       toast.success("Image ajoutée avec succès !");
                     }}
                     selectedCategory={selectedCategory}
                   />
-                  <UploadedImagesList 
+                  <UploadedImagesList
                     images={uploadedImages}
                     canvas={canvas}
                     onImageClick={(image) => {
@@ -136,7 +197,7 @@ const Personalization = () => {
                         canvas.renderAll();
                       }
                     }}
-                    onDeleteImage={handleDeleteImage}
+                    onDeleteImage={handleDeleteActiveObject}
                   />
                 </div>
               </div>

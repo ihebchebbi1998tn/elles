@@ -14,7 +14,7 @@ const LoadingScreen = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-6xl font-bold bg-gradient-to-r from-[#2a98cb] to-[#d175a1] bg-clip-text text-transparent"
+            className="text-6xl font-bold text-[#333333] font-oswald"
           >
             ELLES
           </motion.h1>

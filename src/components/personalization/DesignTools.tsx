@@ -1,4 +1,4 @@
-import { Type, Palette, ArrowUp, ArrowDown, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
+import { Type, Palette, ArrowUp, ArrowDown, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,6 +17,7 @@ interface DesignToolsProps {
   activeText: Text | null;
   canvas: Canvas | null;
   fonts: Array<{ name: string; value: string }>;
+  onAddText: (text: string) => void;
 }
 
 const DesignTools = ({
@@ -29,6 +30,7 @@ const DesignTools = ({
   activeText,
   canvas,
   fonts,
+  onAddText,
 }: DesignToolsProps) => {
   const updateTextStyle = (property: string, value: any) => {
     if (!canvas || !activeText) return;
@@ -58,9 +60,18 @@ const DesignTools = ({
   };
 
   const handleTextInput = (value: string) => {
-    setText(value);
-    if (activeText) {
-      updateTextStyle('text', value);
+    if (value.length <= 30) {
+      setText(value);
+    }
+  };
+
+  const handleAddText = () => {
+    if (text.trim()) {
+      onAddText(text);
+      setText('');
+      toast.success("Texte ajouté avec succès !");
+    } else {
+      toast.error("Veuillez entrer du texte avant d'ajouter");
     }
   };
 
@@ -72,9 +83,18 @@ const DesignTools = ({
           <Input
             value={text}
             onChange={(e) => handleTextInput(e.target.value)}
-            placeholder={text ? undefined : "Tapez votre texte..."}
+            placeholder={text ? undefined : "Tapez votre texte... (max 30 caractères)"}
             className="flex-1 h-9 text-sm"
+            maxLength={30}
           />
+          <Button
+            onClick={handleAddText}
+            variant="outline"
+            size="icon"
+            className="h-9 w-9 shrink-0"
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 

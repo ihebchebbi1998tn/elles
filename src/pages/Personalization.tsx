@@ -82,6 +82,7 @@ const Personalization = () => {
               text={text}
               selectedFont={selectedFont}
               onObjectDelete={handleDeleteActiveObject}
+              selectedCategory={selectedCategory}
             />
           </div>
 
@@ -110,6 +111,7 @@ const Personalization = () => {
                       setUploadedImages(prev => [...prev, image]);
                       toast.success("Image ajoutée avec succès !");
                     }}
+                    selectedCategory={selectedCategory}
                   />
                   <UploadedImagesList 
                     images={uploadedImages}

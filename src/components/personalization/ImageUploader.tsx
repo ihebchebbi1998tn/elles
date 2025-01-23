@@ -17,7 +17,15 @@ const ImageUploader = ({ canvas, onImageUpload, selectedCategory }: ImageUploade
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!canvas || !event.target.files?.[0] || !selectedCategory) return;
+    if (!selectedCategory) {
+      toast.error("Veuillez sélectionner un produit d'abord");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+      return;
+    }
+
+    if (!canvas || !event.target.files?.[0]) return;
 
     const productZone = productZoneConfigs.find(zone => zone.id === selectedCategory);
     if (!productZone) return;
@@ -76,11 +84,19 @@ const ImageUploader = ({ canvas, onImageUpload, selectedCategory }: ImageUploade
           ref={fileInputRef}
           onChange={handleImageUpload}
           className="hidden"
+          disabled={!selectedCategory}
         />
         <Button 
-          onClick={() => fileInputRef.current?.click()}
+          onClick={() => {
+            if (!selectedCategory) {
+              toast.error("Veuillez sélectionner un produit d'abord");
+              return;
+            }
+            fileInputRef.current?.click();
+          }}
           className="w-full"
           variant="secondary"
+          disabled={!selectedCategory}
         >
           <Upload className="h-4 w-4 mr-2" />
           Télécharger une Image

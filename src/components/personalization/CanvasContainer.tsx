@@ -27,7 +27,6 @@ const CanvasContainer = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const deleteButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Handle showing/hiding delete button
   const updateDeleteButton = (target: any) => {
     if (!deleteButtonRef.current || !canvas || !canvas.lowerCanvasEl) return;
     
@@ -117,7 +116,6 @@ const CanvasContainer = ({
       fabricCanvas.add(placeholderText);
     }
 
-    // Add object selection event handlers
     fabricCanvas.on('selection:created', (e) => {
       updateDeleteButton(e.selected?.[0]);
     });
@@ -208,46 +206,9 @@ const CanvasContainer = ({
     const productZone = productZoneConfigs.find(zone => zone.id === selectedCategory);
     if (!productZone) return;
 
-    const existingTexts = canvas.getObjects().filter(obj => obj instanceof Text);
-    existingTexts.forEach(textObj => canvas.remove(textObj));
-
-    if (text) {
-      const fabricText = new Text(text, {
-        left: productZone.zone.left + productZone.zone.width / 2,
-        top: productZone.zone.top + productZone.zone.height / 2,
-        fontSize: 16,
-        fill: "#000000",
-        fontFamily: selectedFont,
-        originX: 'center',
-        originY: 'center',
-        hasControls: true,
-        hasBorders: true,
-        lockUniScaling: false,
-        transparentCorners: false,
-        cornerColor: 'rgba(102,153,255,0.5)',
-        cornerSize: 12,
-        padding: 5
-      });
-
-      canvas.add(fabricText);
-      canvas.setActiveObject(fabricText);
-    } else {
-      const placeholderText = new Text("Tapez votre texte ici...", {
-        left: productZone.zone.left + productZone.zone.width / 2,
-        top: productZone.zone.top + productZone.zone.height / 2,
-        fontSize: 20,
-        fill: "#999999",
-        fontFamily: selectedFont,
-        originX: 'center',
-        originY: 'center',
-        selectable: false,
-        opacity: 0.7
-      });
-      canvas.add(placeholderText);
-    }
-
-    canvas.renderAll();
-  }, [text, canvas, selectedFont, selectedCategory]);
+    // Don't update canvas when text changes, only when text is added via the + button
+    // The text state in parent will still update, but won't affect the canvas
+  }, [canvas, selectedCategory]);
 
   const handleDeleteClick = () => {
     if (!canvas) return;

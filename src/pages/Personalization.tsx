@@ -4,6 +4,7 @@ import { Coffee, Shirt, Briefcase, Newspaper, Book, ShoppingBag } from "lucide-r
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 import { ProductCategory, UploadedImage, fonts } from "@/components/personalization/types";
+import { productZoneConfigs } from "@/components/personalization/config/zoneConfig";
 import ProductSelector from "@/components/personalization/ProductSelector";
 import CanvasContainer from "@/components/personalization/CanvasContainer";
 import DesignTools from "@/components/personalization/DesignTools";
@@ -45,13 +46,64 @@ const Personalization = () => {
     localStorage.setItem('personalization-content', JSON.stringify(contentItems));
   }, [contentItems]);
 
+  useEffect(() => {
+    if (canvas) {
+      canvas.on('selection:created', (e) => {
+        const selectedObject = e.selected?.[0];
+        if (selectedObject instanceof Text) {
+          setActiveText(selectedObject);
+          setText(selectedObject.text || '');
+        }
+      });
+
+      canvas.on('selection:cleared', () => {
+        setActiveText(null);
+        setText('');
+      });
+    }
+  }, [canvas]);
+
   const handleAddText = (newText: string) => {
+    if (!canvas || !selectedCategory) return;
+
+    const productZone = productZoneConfigs.find(zone => zone.id === selectedCategory);
+    if (!productZone) return;
+
+    // Remove placeholder text if it exists
+    const existingTexts = canvas.getObjects().filter(obj => 
+      obj instanceof Text && obj.text === "Tapez votre texte ici..."
+    );
+    existingTexts.forEach(textObj => canvas.remove(textObj));
+
+    // Add the new text
+    const fabricText = new Text(newText, {
+      left: productZone.zone.left + productZone.zone.width / 2,
+      top: productZone.zone.top + productZone.zone.height / 2,
+      fontSize: 16,
+      fill: "#000000",
+      fontFamily: selectedFont,
+      originX: 'center',
+      originY: 'center',
+      hasControls: true,
+      hasBorders: true,
+      lockUniScaling: false,
+      transparentCorners: false,
+      cornerColor: 'rgba(102,153,255,0.5)',
+      cornerSize: 12,
+      padding: 5
+    });
+
+    canvas.add(fabricText);
+    canvas.setActiveObject(fabricText);
+    canvas.renderAll();
+
     const newItem: ContentItem = {
       id: Date.now().toString(),
       type: 'text',
       content: newText
     };
     setContentItems(prev => [...prev, newItem]);
+    setText('');
   };
 
   const handleAddImage = (image: UploadedImage) => {
@@ -161,6 +213,7 @@ const Personalization = () => {
                   canvas={canvas}
                   fonts={fonts}
                   onAddText={handleAddText}
+                  selectedCategory={selectedCategory}
                 />
               </div>
 

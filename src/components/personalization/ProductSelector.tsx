@@ -43,17 +43,14 @@ const ProductSelector = ({
               onCategorySelect(category.id);
               toast.success(`Catégorie ${category.name} sélectionnée`);
             }}
-            className={`p-4 cursor-pointer transition-all duration-300 hover:shadow-lg ${
+            className={`p-6 cursor-pointer transition-all duration-300 hover:shadow-lg ${
               selectedCategory === category.id
                 ? "border-2 border-primary"
                 : "hover:border-primary/50"
             }`}
           >
             <div className="flex flex-col space-y-3">
-              <div className="flex items-center gap-3">
-                <category.icon className="h-6 w-6 text-primary" />
-                <h3 className="font-medium">{category.name}</h3>
-              </div>
+              <h3 className="text-lg font-semibold text-primary">{category.name}</h3>
               <p className="text-sm text-gray-600">
                 {category.description || "Personnalisez votre produit unique"}
               </p>

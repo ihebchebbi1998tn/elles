@@ -1,88 +1,172 @@
-import { ProductZoneConfig } from "../types/productZones";
+interface Zone {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+  backgroundColor: string;
+  borderColor: string;
+  borderWidth: number;
+}
+
+interface ProductFaceZone {
+  sideId: string;
+  zone: Zone;
+}
+
+export interface ProductZoneConfig {
+  id: string;
+  faces: ProductFaceZone[];
+}
 
 export const productZoneConfigs: ProductZoneConfig[] = [
   {
-    id: 'mugs',
-    name: 'Tasses',
-    zone: {
-      width: 200,
-      height: 150,
-      top: 100,
-      left: 150,
-      backgroundColor: '#F6F6F7',
-      borderColor: '#8E9196',
-      borderWidth: 2,
-      borderStyle: 'dashed'
-    }
+    id: "tshirts",
+    faces: [
+      {
+        sideId: "front",
+        zone: {
+          left: 150,
+          top: 150,
+          width: 200,
+          height: 200,
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      },
+      {
+        sideId: "back",
+        zone: {
+          left: 150,
+          top: 150,
+          width: 200,
+          height: 200,
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      }
+    ]
   },
   {
-    id: 'tshirts',
-    name: 'T-shirts',
-    zone: {
-      width: 250,
-      height: 300,
-      top: 150,
-      left: 175,
-      backgroundColor: '#F1F0FB',
-      borderColor: '#9b87f5',
-      borderWidth: 2,
-      borderStyle: 'dashed'
-    }
+    id: "blouses",
+    faces: [
+      {
+        sideId: "front",
+        zone: {
+          left: 150,
+          top: 150,
+          width: 200,
+          height: 200,
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      },
+      {
+        sideId: "back",
+        zone: {
+          left: 150,
+          top: 150,
+          width: 200,
+          height: 200,
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      }
+    ]
   },
   {
-    id: 'blouses',
-    name: 'Blouses de travail',
-    zone: {
-      width: 250,
-      height: 300,
-      top: 150,
-      left: 175,
-      backgroundColor: '#F2FCE2',
-      borderColor: '#8E9196',
-      borderWidth: 2,
-      borderStyle: 'dashed'
-    }
+    id: "mugs",
+    faces: [
+      {
+        sideId: "front",
+        zone: {
+          left: 150,
+          top: 150,
+          width: 200,
+          height: 150,
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      }
+    ]
   },
   {
-    id: 'flyers',
-    name: 'Flyers',
-    zone: {
-      width: 400,
-      height: 500,
-      top: 50,
-      left: 50,
-      backgroundColor: '#FEF7CD',
-      borderColor: '#8E9196',
-      borderWidth: 2,
-      borderStyle: 'dashed'
-    }
+    id: "flyers",
+    faces: [
+      {
+        sideId: "front",
+        zone: {
+          left: 100,
+          top: 100,
+          width: 300,
+          height: 300,
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      },
+      {
+        sideId: "back",
+        zone: {
+          left: 100,
+          top: 100,
+          width: 300,
+          height: 300,
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      }
+    ]
   },
   {
-    id: 'notebooks',
-    name: 'Carnets',
-    zone: {
-      width: 300,
-      height: 400,
-      top: 100,
-      left: 100,
-      backgroundColor: '#FFDEE2',
-      borderColor: '#8E9196',
-      borderWidth: 2,
-      borderStyle: 'dashed'
-    }
+    id: "notebooks",
+    faces: [
+      {
+        sideId: "front",
+        zone: {
+          left: 150,
+          top: 150,
+          width: 200,
+          height: 250,
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      }
+    ]
   },
   {
-    id: 'bags',
-    name: 'Sacs',
-    zone: {
-      width: 300,
-      height: 250,
-      top: 150,
-      left: 150,
-      backgroundColor: '#D3E4FD',
-      borderColor: '#8E9196',
-      borderWidth: 2,
-      borderStyle: 'dashed'
-    }
+    id: "bags",
+    faces: [
+      {
+        sideId: "front",
+        zone: {
+          left: 150,
+          top: 150,
+          width: 200,
+          height: 200,
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      },
+      {
+        sideId: "back",
+        zone: {
+          left: 150,
+          top: 150,
+          width: 200,
+          height: 200,
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      }
+    ]
   }
 ];

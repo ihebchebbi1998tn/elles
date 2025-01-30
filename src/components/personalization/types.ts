@@ -1,7 +1,6 @@
 export interface ProductCategory {
   id: string;
   name: string;
-  icon: React.ElementType;
   description?: string;
   startingPrice?: string;
 }

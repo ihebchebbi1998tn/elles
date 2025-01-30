@@ -1,11 +1,12 @@
-import { Type, Palette, ArrowUp, ArrowDown, Bold, Italic, Underline, AlignLeft, AlignCenter, AlignRight, Plus, Check, Info } from "lucide-react";
+import { Plus, Check, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Canvas, Text } from "fabric";
 import { toast } from "sonner";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import TextStyleControls from "./text-tools/TextStyleControls";
+import TextSizeControls from "./text-tools/TextSizeControls";
 import {
   Tooltip,
   TooltipContent,
@@ -41,26 +42,41 @@ const DesignTools = ({
   selectedCategory,
 }: DesignToolsProps) => {
   const updateTextStyle = (property: string, value: any) => {
-    if (!canvas || !activeText) return;
+    if (!canvas) return;
     
-    activeText.set(property, value);
-    canvas.renderAll();
-    toast.success(`Style mis à jour !`);
+    if (activeText) {
+      // Update existing text on canvas
+      activeText.set(property, value);
+      canvas.renderAll();
+    }
+    
+    // Update corresponding state
+    switch(property) {
+      case 'fontFamily':
+        setSelectedFont(value);
+        break;
+      case 'fill':
+        setTextColor(value);
+        break;
+      case 'text':
+        setText(value);
+        break;
+    }
+
+    toast.success("Style mis à jour !");
   };
 
   const handleFontChange = (value: string) => {
-    setSelectedFont(value);
     updateTextStyle('fontFamily', value);
   };
 
   const handleColorChange = (color: string) => {
-    setTextColor(color);
     updateTextStyle('fill', color);
   };
 
   const adjustTextSize = (increase: boolean) => {
     if (!canvas || !activeText) return;
-    const currentSize = activeText.fontSize || 16;
+    const currentSize = activeText.get('fontSize') || 16;
     const newSize = increase ? currentSize + 2 : currentSize - 2;
     if (newSize >= 8 && newSize <= 72) {
       updateTextStyle('fontSize', newSize);
@@ -71,8 +87,7 @@ const DesignTools = ({
     if (value.length <= 30) {
       setText(value);
       if (activeText) {
-        activeText.set('text', value);
-        canvas?.renderAll();
+        updateTextStyle('text', value);
       }
     }
   };
@@ -85,14 +100,12 @@ const DesignTools = ({
 
     if (text.trim()) {
       if (activeText) {
-        // Update existing text
-        activeText.set('text', text);
-        canvas?.renderAll();
+        updateTextStyle('text', text);
         setText('');
         toast.success("Texte mis à jour avec succès !");
       } else {
-        // Add new text
-        onAddText(text);
+        const newText = text;
+        onAddText(newText);
         setText('');
         toast.success("Texte ajouté avec succès !");
       }
@@ -103,7 +116,7 @@ const DesignTools = ({
 
   return (
     <div className="space-y-3 bg-white p-4 rounded-lg shadow-sm border border-gray-100">
-      <div className="space-y-2">
+      <div className="space-y-3">
         <div className="flex items-center justify-between">
           <Label className="text-xs font-medium text-gray-700">Texte</Label>
           <TooltipProvider>
@@ -113,20 +126,24 @@ const DesignTools = ({
                   <Info className="h-4 w-4 text-gray-500" />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent className="max-w-[300px]">
-                <div className="space-y-2">
-                  <p>Comment utiliser le texte :</p>
+              <TooltipContent 
+                className="bg-white border border-gray-200 shadow-lg p-4 rounded-lg max-w-[300px] z-50"
+                sideOffset={5}
+              >
+                <div className="space-y-2 text-gray-700">
+                  <p className="font-medium">Comment utiliser le texte :</p>
                   <ul className="list-disc pl-4 space-y-1 text-sm">
                     <li>Tapez votre texte (max 30 caractères)</li>
+                    <li>Personnalisez le style avant d'ajouter</li>
                     <li>Cliquez sur + pour ajouter</li>
                     <li>Cliquez sur un texte existant pour le modifier</li>
-                    <li>Le texte apparaîtra dans la zone sélectionnée</li>
                   </ul>
                 </div>
               </TooltipContent>
             </Tooltip>
           </TooltipProvider>
         </div>
+
         <div className="flex gap-2">
           <Input
             value={text}
@@ -146,121 +163,56 @@ const DesignTools = ({
             {activeText ? <Check className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
           </Button>
         </div>
-      </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div className="space-y-2">
-          <Label className="text-xs font-medium text-gray-700">Police</Label>
-          <Select value={selectedFont} onValueChange={handleFontChange}>
-            <SelectTrigger className="h-9 text-sm">
-              <SelectValue placeholder="Choisir une police" />
-            </SelectTrigger>
-            <SelectContent>
-              {fonts.map((font) => (
-                <SelectItem 
-                  key={font.value} 
-                  value={font.value}
-                  style={{ fontFamily: font.value }}
-                  className="text-sm"
-                >
-                  {font.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-2">
+            <Label className="text-xs font-medium text-gray-700">Police</Label>
+            <Select value={selectedFont} onValueChange={handleFontChange}>
+              <SelectTrigger className="h-9 text-sm">
+                <SelectValue placeholder="Choisir une police" />
+              </SelectTrigger>
+              <SelectContent>
+                {fonts.map((font) => (
+                  <SelectItem 
+                    key={font.value} 
+                    value={font.value}
+                    style={{ fontFamily: font.value }}
+                    className="text-sm"
+                  >
+                    {font.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-        <div className="space-y-2">
-          <Label className="text-xs font-medium text-gray-700">Couleur</Label>
-          <div className="flex gap-2">
-            <Input
-              type="color"
-              value={textColor}
-              onChange={(e) => handleColorChange(e.target.value)}
-              className="w-full h-9 p-1 cursor-pointer"
-            />
+          <div className="space-y-2">
+            <Label className="text-xs font-medium text-gray-700">Couleur</Label>
+            <div className="flex gap-2">
+              <Input
+                type="color"
+                value={textColor}
+                onChange={(e) => handleColorChange(e.target.value)}
+                className="w-full h-9 p-1 cursor-pointer"
+              />
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="space-y-2">
-        <Label className="text-xs font-medium text-gray-700">Style du Texte</Label>
-        <div className="flex gap-2">
-          <ToggleGroup type="multiple" className="justify-start bg-gray-50 p-1 rounded-md">
-            <ToggleGroupItem 
-              value="bold" 
-              aria-label="Toggle bold"
-              onClick={() => updateTextStyle('fontWeight', activeText?.fontWeight === 'bold' ? 'normal' : 'bold')}
-              className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
-            >
-              <Bold className="h-4 w-4" />
-            </ToggleGroupItem>
-            <ToggleGroupItem 
-              value="italic" 
-              aria-label="Toggle italic"
-              onClick={() => updateTextStyle('fontStyle', activeText?.fontStyle === 'italic' ? 'normal' : 'italic')}
-              className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
-            >
-              <Italic className="h-4 w-4" />
-            </ToggleGroupItem>
-            <ToggleGroupItem 
-              value="underline" 
-              aria-label="Toggle underline"
-              onClick={() => updateTextStyle('underline', !activeText?.underline)}
-              className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
-            >
-              <Underline className="h-4 w-4" />
-            </ToggleGroupItem>
-          </ToggleGroup>
-
-          <ToggleGroup type="single" className="justify-start bg-gray-50 p-1 rounded-md">
-            <ToggleGroupItem 
-              value="left" 
-              aria-label="Align left"
-              onClick={() => updateTextStyle('textAlign', 'left')}
-              className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
-            >
-              <AlignLeft className="h-4 w-4" />
-            </ToggleGroupItem>
-            <ToggleGroupItem 
-              value="center" 
-              aria-label="Align center"
-              onClick={() => updateTextStyle('textAlign', 'center')}
-              className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
-            >
-              <AlignCenter className="h-4 w-4" />
-            </ToggleGroupItem>
-            <ToggleGroupItem 
-              value="right" 
-              aria-label="Align right"
-              onClick={() => updateTextStyle('textAlign', 'right')}
-              className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
-            >
-              <AlignRight className="h-4 w-4" />
-            </ToggleGroupItem>
-          </ToggleGroup>
+        <div className="space-y-2">
+          <Label className="text-xs font-medium text-gray-700">Style du Texte</Label>
+          <TextStyleControls 
+            activeText={activeText}
+            onStyleUpdate={updateTextStyle}
+          />
         </div>
-      </div>
 
-      <div className="space-y-2">
-        <Label className="text-xs font-medium text-gray-700">Taille du Texte</Label>
-        <div className="flex gap-2">
-          <Button 
-            onClick={() => adjustTextSize(false)} 
-            size="icon" 
-            variant="outline"
-            className="h-8 w-8"
-          >
-            <ArrowDown className="h-4 w-4" />
-          </Button>
-          <Button 
-            onClick={() => adjustTextSize(true)} 
-            size="icon" 
-            variant="outline"
-            className="h-8 w-8"
-          >
-            <ArrowUp className="h-4 w-4" />
-          </Button>
+        <div className="space-y-2">
+          <Label className="text-xs font-medium text-gray-700">Taille du Texte</Label>
+          <TextSizeControls 
+            activeText={activeText}
+            onSizeUpdate={adjustTextSize}
+          />
         </div>
       </div>
     </div>

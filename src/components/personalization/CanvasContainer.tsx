@@ -1,9 +1,13 @@
 import { useEffect, useRef } from "react";
-import { Canvas, Text, Rect } from "fabric";
+import { Canvas, Rect, Image as FabricImage } from "fabric";
 import { Card } from "@/components/ui/card";
-import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 import { productZoneConfigs } from "./config/zoneConfig";
+import { productSidesConfigs } from "./config/productSidesConfig";
+import ProductSideSelector from "./ProductSideSelector";
 import { toast } from "sonner";
+import { productSideImages } from "./config/productSideImagesConfig";
 
 interface CanvasContainerProps {
   canvas: Canvas | null;
@@ -12,238 +16,139 @@ interface CanvasContainerProps {
   text: string;
   selectedFont: string;
   onObjectDelete: () => void;
-  selectedCategory: string | null;
+  selectedCategory: string;
+  selectedSide: string;
+  onSideSelect: (sideId: string) => void;
 }
 
-const CanvasContainer = ({ 
-  canvas, 
-  setCanvas, 
-  isMobile, 
-  text, 
+const CanvasContainer = ({
+  canvas,
+  setCanvas,
+  isMobile,
+  text,
   selectedFont,
   onObjectDelete,
-  selectedCategory 
+  selectedCategory,
+  selectedSide,
+  onSideSelect,
 }: CanvasContainerProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const deleteButtonRef = useRef<HTMLButtonElement>(null);
-
-  const updateDeleteButton = (target: any) => {
-    if (!deleteButtonRef.current || !canvas || !canvas.lowerCanvasEl) return;
-    
-    if (target) {
-      const bound = target.getBoundingRect();
-      const offset = canvas.calcOffset();
-      
-      // Position the delete button relative to the canvas container
-      const canvasContainer = canvas.lowerCanvasEl.parentElement;
-      if (!canvasContainer) return;
-      
-      const canvasRect = canvasContainer.getBoundingClientRect();
-      const buttonLeft = bound.left + bound.width;
-      const buttonTop = bound.top - 12;
-      
-      deleteButtonRef.current.style.display = 'block';
-      deleteButtonRef.current.style.left = `${buttonLeft}px`;
-      deleteButtonRef.current.style.top = `${buttonTop}px`;
-      deleteButtonRef.current.style.zIndex = '1000';
-      deleteButtonRef.current.style.opacity = '1';
-    } else {
-      deleteButtonRef.current.style.display = 'none';
-    }
-  };
+  const productConfig = productSidesConfigs.find((config) => config.id === selectedCategory);
+  const zoneConfig = productZoneConfigs.find((config) => config.id === selectedCategory);
+  const productImages = productSideImages.find(p => p.productId === selectedCategory)?.sides || [];
+  const currentSideImage = productImages.find(img => img.sideId === selectedSide);
+  const currentZone = zoneConfig?.faces.find(face => face.sideId === selectedSide)?.zone;
 
   useEffect(() => {
     if (!canvasRef.current) return;
 
-    const canvasWidth = isMobile ? window.innerWidth - 32 : 500;
-    const canvasHeight = isMobile ? window.innerHeight * 0.5 : 600;
+    // Clean up existing canvas
+    if (canvas) {
+      canvas.dispose();
+      setCanvas(null);
+    }
 
-    const fabricCanvas = new Canvas(canvasRef.current, {
-      width: canvasWidth,
-      height: canvasHeight,
-      backgroundColor: "#f8f9fa",
+    const newCanvas = new Canvas(canvasRef.current, {
+      width: isMobile ? 350 : 500,
+      height: isMobile ? 350 : 500,
+      backgroundColor: "#ffffff",
       preserveObjectStacking: true,
     });
 
-    // Find the selected product zone
-    const productZone = productZoneConfigs.find(zone => zone.id === selectedCategory);
-
-    if (productZone) {
-      const clipRect = new Rect({
-        width: productZone.zone.width,
-        height: productZone.zone.height,
-        left: productZone.zone.left,
-        top: productZone.zone.top,
-        absolutePositioned: true,
-        fill: productZone.zone.backgroundColor,
-        stroke: productZone.zone.borderColor,
-        strokeWidth: productZone.zone.borderWidth,
-        strokeDashArray: productZone.zone.borderStyle === 'dashed' ? [5, 5] : undefined,
-        selectable: false,
-        evented: false,
+    // Add background image if available
+    if (currentSideImage?.imageUrl) {
+      FabricImage.fromURL(currentSideImage.imageUrl, {
+        crossOrigin: 'anonymous'
+      }).then((img) => {
+        img.scaleToWidth(newCanvas.width!);
+        img.scaleToHeight(newCanvas.height!);
+        img.set({
+          selectable: false,
+          evented: false,
+        });
+        newCanvas.backgroundImage = img;
+        
+        // Add customization zone after background image is loaded
+        if (currentZone) {
+          const zone = new Rect({
+            left: currentZone.left,
+            top: currentZone.top,
+            width: currentZone.width,
+            height: currentZone.height,
+            fill: currentZone.backgroundColor,
+            stroke: currentZone.borderColor,
+            strokeWidth: currentZone.borderWidth,
+            strokeDashArray: [6, 6],
+            selectable: false,
+            evented: false,
+          });
+          newCanvas.add(zone);
+          newCanvas.renderAll();
+        }
       });
-
-      fabricCanvas.clipPath = clipRect;
-      
-      const borderRect = new Rect({
-        width: productZone.zone.width,
-        height: productZone.zone.height,
-        left: productZone.zone.left,
-        top: productZone.zone.top,
-        fill: 'transparent',
-        stroke: productZone.zone.borderColor,
-        strokeWidth: productZone.zone.borderWidth,
-        strokeDashArray: productZone.zone.borderStyle === 'dashed' ? [5, 5] : undefined,
-        selectable: false,
-        evented: false,
-      });
-      
-      fabricCanvas.add(borderRect);
-      fabricCanvas.sendObjectToBack(borderRect);
-
-      const placeholderText = new Text("Tapez votre texte ici...", {
-        left: productZone.zone.left + productZone.zone.width / 2,
-        top: productZone.zone.top + productZone.zone.height / 2,
-        fontSize: 20,
-        fill: "#999999",
-        fontFamily: selectedFont,
-        originX: 'center',
-        originY: 'center',
-        selectable: false,
-        opacity: 0.7
-      });
-
-      fabricCanvas.add(placeholderText);
+    } else {
+      // If no background image, just add the zone
+      if (currentZone) {
+        const zone = new Rect({
+          left: currentZone.left,
+          top: currentZone.top,
+          width: currentZone.width,
+          height: currentZone.height,
+          fill: currentZone.backgroundColor,
+          stroke: currentZone.borderColor,
+          strokeWidth: currentZone.borderWidth,
+          strokeDashArray: [6, 6],
+          selectable: false,
+          evented: false,
+        });
+        newCanvas.add(zone);
+        newCanvas.renderAll();
+      }
     }
 
-    fabricCanvas.on('selection:created', (e) => {
-      updateDeleteButton(e.selected?.[0]);
-    });
-
-    fabricCanvas.on('selection:updated', (e) => {
-      updateDeleteButton(e.selected?.[0]);
-    });
-
-    fabricCanvas.on('selection:cleared', () => {
-      updateDeleteButton(null);
-    });
-
-    fabricCanvas.on('object:moving', (e) => {
-      const obj = e.target;
-      if (!obj || !productZone) return;
-
-      const objBounds = obj.getBoundingRect();
-      const zone = productZone.zone;
-
-      const objCenterX = objBounds.left + objBounds.width / 2;
-      const objCenterY = objBounds.top + objBounds.height / 2;
-
-      const zoneLeft = zone.left;
-      const zoneRight = zone.left + zone.width;
-      const zoneTop = zone.top;
-      const zoneBottom = zone.top + zone.height;
-
-      if (objBounds.left < zoneLeft) {
-        obj.set('left', obj.left + (zoneLeft - objBounds.left));
-      }
-      if (objBounds.top < zoneTop) {
-        obj.set('top', obj.top + (zoneTop - objBounds.top));
-      }
-      if (objBounds.left + objBounds.width > zoneRight) {
-        obj.set('left', obj.left - ((objBounds.left + objBounds.width) - zoneRight));
-      }
-      if (objBounds.top + objBounds.height > zoneBottom) {
-        obj.set('top', obj.top - ((objBounds.top + objBounds.height) - zoneBottom));
-      }
-
-      updateDeleteButton(obj);
-      fabricCanvas.renderAll();
-    });
-
-    fabricCanvas.on('object:scaling', (e) => {
-      const obj = e.target;
-      if (!obj || !productZone) return;
-
-      const objBounds = obj.getBoundingRect();
-      const zone = productZone.zone;
-      
-      const currentScaleX = obj.scaleX || 1;
-      const currentScaleY = obj.scaleY || 1;
-
-      const isWithinBounds = 
-        objBounds.left >= zone.left &&
-        objBounds.top >= zone.top &&
-        objBounds.left + objBounds.width <= zone.left + zone.width &&
-        objBounds.top + objBounds.height <= zone.top + zone.height;
-
-      if (!isWithinBounds) {
-        if (typeof obj.get('lastScaleX') === 'number') {
-          obj.set('scaleX', obj.get('lastScaleX'));
-        }
-        if (typeof obj.get('lastScaleY') === 'number') {
-          obj.set('scaleY', obj.get('lastScaleY'));
-        }
-      } else {
-        obj.set('lastScaleX', currentScaleX);
-        obj.set('lastScaleY', currentScaleY);
-      }
-      
-      updateDeleteButton(obj);
-      fabricCanvas.renderAll();
-    });
-
-    fabricCanvas.renderAll();
-    setCanvas(fabricCanvas);
+    setCanvas(newCanvas);
+    toast.success("Zone de personnalisation prête !");
 
     return () => {
-      fabricCanvas.dispose();
+      newCanvas.dispose();
     };
-  }, [isMobile, selectedFont, selectedCategory]);
+  }, [selectedCategory, selectedSide, isMobile]);
 
-  useEffect(() => {
-    if (!canvas || !selectedCategory) return;
-
-    const productZone = productZoneConfigs.find(zone => zone.id === selectedCategory);
-    if (!productZone) return;
-
-    // Don't update canvas when text changes, only when text is added via the + button
-    // The text state in parent will still update, but won't affect the canvas
-  }, [canvas, selectedCategory]);
-
-  const handleDeleteClick = () => {
-    if (!canvas) return;
-    const activeObject = canvas.getActiveObject();
-    if (activeObject) {
-      canvas.remove(activeObject);
-      canvas.renderAll();
-      updateDeleteButton(null);
+  const handleKeyDown = (e: KeyboardEvent) => {
+    if (e.key === "Delete" || e.key === "Backspace") {
       onObjectDelete();
-      toast.success("Élément supprimé");
     }
   };
 
+  useEffect(() => {
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onObjectDelete]);
+
   return (
-    <Card className="p-4 lg:p-6">
-      <div className="w-full flex items-center justify-center bg-gray-50 rounded-lg overflow-hidden relative min-h-[600px]">
-        <canvas 
-          ref={canvasRef} 
-          className="max-w-full touch-manipulation shadow-lg"
-        />
-        <button
-          ref={deleteButtonRef}
-          onClick={handleDeleteClick}
-          className="absolute bg-red-500 hover:bg-red-600 text-white rounded-full w-8 h-8 cursor-pointer shadow-lg transition-colors flex items-center justify-center"
-          style={{
-            display: 'none',
-            position: 'absolute',
-            transform: 'translate(50%, -50%)',
-          }}
-          aria-label="Delete item"
+    <div className="space-y-4">
+      <ProductSideSelector
+        sides={productConfig?.sides || []}
+        activeSide={selectedSide}
+        onSideSelect={onSideSelect}
+        selectedCategory={selectedCategory}
+      />
+      <Card className="p-4 relative">
+        <div className="flex justify-center">
+          <canvas ref={canvasRef} className="border border-gray-200 rounded-lg" />
+        </div>
+        <Button
+          variant="destructive"
+          size="icon"
+          className="absolute top-4 right-4"
+          onClick={onObjectDelete}
         >
-          <X className="h-5 w-5" />
-        </button>
-      </div>
-    </Card>
+          <Trash2 className="h-4 w-4" />
+        </Button>
+      </Card>
+    </div>
   );
 };
 

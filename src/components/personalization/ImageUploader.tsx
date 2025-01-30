@@ -28,7 +28,7 @@ const ImageUploader = ({ canvas, onImageUpload, selectedCategory }: ImageUploade
     if (!canvas || !event.target.files?.[0]) return;
 
     const productZone = productZoneConfigs.find(zone => zone.id === selectedCategory);
-    if (!productZone) return;
+    if (!productZone?.faces?.[0]?.zone) return;
 
     const file = event.target.files[0];
     const reader = new FileReader();
@@ -39,11 +39,11 @@ const ImageUploader = ({ canvas, onImageUpload, selectedCategory }: ImageUploade
       FabricImage.fromURL(e.target.result.toString(), {
         crossOrigin: 'anonymous',
       }).then((fabricImage) => {
-        if (fabricImage) {
+        if (fabricImage && productZone.faces[0].zone) {
           fabricImage.scaleToWidth(150);
           fabricImage.set({
-            left: productZone.zone.left + productZone.zone.width / 2,
-            top: productZone.zone.top + productZone.zone.height / 2,
+            left: productZone.faces[0].zone.left + productZone.faces[0].zone.width / 2,
+            top: productZone.faces[0].zone.top + productZone.faces[0].zone.height / 2,
             originX: 'center',
             originY: 'center',
             cornerColor: 'rgba(102,153,255,0.5)',
@@ -77,7 +77,7 @@ const ImageUploader = ({ canvas, onImageUpload, selectedCategory }: ImageUploade
   return (
     <div className="space-y-2">
       <Label className="text-sm font-medium">Ajouter une Image</Label>
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2">
         <Input
           type="file"
           accept="image/*"

@@ -2,11 +2,13 @@ import { X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 interface ContentItem {
   id: string;
   type: 'text' | 'image';
   content: string;
+  side: string;
 }
 
 interface ContentSectionProps {
@@ -31,6 +33,9 @@ const ContentSection = ({ items, onDeleteItem, onSelectItem }: ContentSectionPro
                 <span className="text-sm truncate max-w-[200px]">
                   {item.type === 'text' ? item.content : `Image: ${item.content}`}
                 </span>
+                <Badge variant="secondary" className="text-xs">
+                  {item.side}
+                </Badge>
               </div>
               <Button
                 variant="ghost"

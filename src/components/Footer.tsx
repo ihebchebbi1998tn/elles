@@ -1,4 +1,4 @@
-import { CreditCard, Facebook, Instagram, Twitter, MapPin, Phone, Mail, Clock } from "lucide-react";
+import { Facebook, Instagram, Twitter, MapPin, Phone, Mail, Clock } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
@@ -6,7 +6,7 @@ const Footer = () => {
     <footer className="bg-[#1A1F2C] text-gray-300">
       {/* Main Footer Content */}
       <div className="container py-16">
-        <div className="grid grid-cols-1 gap-12 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-3">
           {/* Company Info */}
           <div className="space-y-4">
             <h3 className="font-playfair text-2xl font-bold text-white">ELLES</h3>
@@ -70,25 +70,6 @@ const Footer = () => {
                 Lun - Ven: 9h - 18h
               </li>
             </ul>
-          </div>
-
-          {/* Payment Info */}
-          <div className="space-y-4">
-            <h4 className="font-sans text-lg font-semibold text-white">Paiement Sécurisé</h4>
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <CreditCard className="h-5 w-5 text-secondary" />
-                <span className="text-sm">Paiement 100% sécurisé</span>
-              </div>
-              <p className="text-sm leading-relaxed">
-                Nous acceptons toutes les cartes bancaires majeures et proposons des options de paiement flexibles pour les professionnels.
-              </p>
-              <div className="flex flex-wrap gap-2 pt-2">
-                <img src="/visa.png" alt="Visa" className="h-8" />
-                <img src="/mastercard.png" alt="Mastercard" className="h-8" />
-                <img src="/amex.png" alt="American Express" className="h-8" />
-              </div>
-            </div>
           </div>
         </div>
       </div>

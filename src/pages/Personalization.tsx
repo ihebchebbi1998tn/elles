@@ -10,6 +10,8 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { products } from "@/config/products";
 import PersonalizationHeader from "@/components/personalization/PersonalizationHeader";
 import DesignWorkspace from "@/components/personalization/DesignWorkspace";
+import ProductSwitchDialog from "@/components/personalization/ProductSwitchDialog";
+import { productSidesConfigs } from "@/components/personalization/config/productSidesConfig";
 
 // Convert products config to ProductCategory type
 const productCategories: ProductCategory[] = products.map(product => ({
@@ -34,30 +36,130 @@ const Personalization = () => {
   const [selectedSide, setSelectedSide] = useState<string>('front');
   const [isLoading, setIsLoading] = useState(false);
   const isMobile = useIsMobile();
+  const [showProductSwitch, setShowProductSwitch] = useState(false);
+  const [targetProduct, setTargetProduct] = useState<string>("");
 
   useEffect(() => {
+    if (selectedCategory) {
+      localStorage.setItem(`design-${selectedCategory}`, JSON.stringify(contentItems));
+    }
     localStorage.setItem('personalization-content', JSON.stringify(contentItems));
-  }, [contentItems]);
+  }, [contentItems, selectedCategory]);
 
-  const handleCategorySelect = (categoryId: string) => {
-    setIsLoading(true);
-    setSelectedCategory(categoryId);
-    
-    // Simulate loading time
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 3000);
+  const getCurrentSideName = (sideId: string) => {
+    if (!selectedCategory) return sideId;
+    const productConfig = productSidesConfigs.find(config => config.id === selectedCategory);
+    if (!productConfig) return sideId;
+    const side = productConfig.sides.find(side => side.id === sideId);
+    return side?.title || sideId;
   };
 
-  const handleBack = () => {
-    setSelectedCategory(null);
+  const handleCategorySelect = (categoryId: string) => {
+    if (categoryId === selectedCategory) {
+      const hasExistingDesign = Object.keys(localStorage).some(key => 
+        key.startsWith(`design-${categoryId}`)
+      );
+
+      if (hasExistingDesign) {
+        setTargetProduct(categoryId);
+        setShowProductSwitch(true);
+      } else {
+        clearDesign();
+        toast.success("Zone de design réinitialisée !");
+      }
+      return;
+    }
+
+    if (selectedCategory && contentItems.length > 0) {
+      setTargetProduct(categoryId);
+      setShowProductSwitch(true);
+    } else {
+      setIsLoading(true);
+      setSelectedCategory(categoryId);
+      setTimeout(() => {
+        setIsLoading(false);
+      }, 3000);
+    }
+  };
+
+  const clearDesign = () => {
+    if (canvas) {
+      canvas.clear();
+      canvas.renderAll();
+    }
     setContentItems([]);
     setUploadedImages([]);
     setText("");
     setActiveText(null);
-    if (canvas) {
-      canvas.clear();
+    
+    // Clear localStorage for the current design
+    if (selectedCategory) {
+      localStorage.removeItem(`design-${selectedCategory}`);
+    }
+    localStorage.removeItem('personalization-content');
+  };
+
+  const handleProductSwitch = () => {
+    setSelectedCategory(targetProduct);
+    clearDesign();
+    setShowProductSwitch(false);
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 3000);
+    toast.success("Produit changé avec succès !");
+  };
+
+  const handleBack = () => {
+    setSelectedCategory(null);
+    clearDesign();
+  };
+
+  const handleDeleteActiveObject = () => {
+    if (!canvas) return;
+    const activeObject = canvas.getActiveObject();
+    if (activeObject) {
+      canvas.remove(activeObject);
       canvas.renderAll();
+      
+      if (activeObject.type === 'image') {
+        const imageUrl = (activeObject as any)._element?.src;
+        const updatedImages = uploadedImages.filter(img => img.url !== imageUrl);
+        setUploadedImages(updatedImages);
+        
+        const updatedContentItems = contentItems.filter(item => 
+          !(item.type === 'image' && item.content === imageUrl)
+        );
+        setContentItems(updatedContentItems);
+        
+        // Update localStorage
+        if (selectedCategory) {
+          localStorage.setItem(`design-${selectedCategory}`, JSON.stringify(updatedContentItems));
+        }
+        localStorage.setItem('personalization-content', JSON.stringify(updatedContentItems));
+      }
+      
+      if (activeObject.type === 'text') {
+        const textContent = (activeObject as any).text;
+        const updatedContentItems = contentItems.filter(item => 
+          !(item.type === 'text' && item.content === textContent)
+        );
+        setContentItems(updatedContentItems.map(item => ({
+          ...item,
+          side: getCurrentSideName(item.side)
+        })));
+        
+        // Update localStorage
+        if (selectedCategory) {
+          localStorage.setItem(`design-${selectedCategory}`, JSON.stringify(updatedContentItems));
+        }
+        localStorage.setItem('personalization-content', JSON.stringify(updatedContentItems));
+        
+        setText('');
+        setActiveText(null);
+      }
+      
+      toast.success("Élément supprimé !");
     }
   };
 
@@ -89,28 +191,28 @@ const Personalization = () => {
                   <MinimizedProductCarousel
                     products={products}
                     selectedProduct={selectedCategory}
-                    onProductSelect={setSelectedCategory}
+                    onProductSelect={handleCategorySelect}
                   />
 
                   <DesignWorkspace
                     canvas={canvas}
                     setCanvas={setCanvas}
+                    selectedCategory={selectedCategory}
+                    setSelectedCategory={setSelectedCategory}
+                    isMobile={isMobile}
                     text={text}
                     setText={setText}
                     selectedFont={selectedFont}
                     setSelectedFont={setSelectedFont}
-                    textColor={textColor}
-                    setTextColor={setTextColor}
-                    activeText={activeText}
-                    setActiveText={setActiveText}
-                    uploadedImages={uploadedImages}
-                    setUploadedImages={setUploadedImages}
-                    contentItems={contentItems}
-                    setContentItems={setContentItems}
-                    selectedCategory={selectedCategory}
-                    selectedSide={selectedSide}
-                    setSelectedSide={setSelectedSide}
-                    isMobile={isMobile}
+                    onObjectDelete={handleDeleteActiveObject}
+                  />
+
+                  <ProductSwitchDialog
+                    open={showProductSwitch}
+                    onOpenChange={setShowProductSwitch}
+                    currentProduct={products.find(p => p.id === selectedCategory)?.name || ""}
+                    targetProduct={products.find(p => p.id === targetProduct)?.name || ""}
+                    onConfirm={handleProductSwitch}
                   />
                 </>
               )}

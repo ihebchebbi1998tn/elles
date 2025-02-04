@@ -4,37 +4,61 @@ import { Text } from "fabric";
 
 interface TextStyleControlsProps {
   activeText: Text | null;
+  textStyle: {
+    bold: boolean;
+    italic: boolean;
+    underline: boolean;
+    align: string;
+  };
   onStyleUpdate: (property: string, value: any) => void;
+  disabled?: boolean;
 }
 
-const TextStyleControls = ({ activeText, onStyleUpdate }: TextStyleControlsProps) => {
+const TextStyleControls = ({ activeText, textStyle, onStyleUpdate, disabled }: TextStyleControlsProps) => {
+  console.log('Current text styles:', textStyle);
+  
   return (
     <div className="flex gap-2">
-      <ToggleGroup type="multiple" className="justify-start bg-gray-50 p-1 rounded-md">
+      <ToggleGroup type="multiple" className={`justify-start bg-gray-50 p-1 rounded-md ${disabled ? 'opacity-50' : ''}`}>
         <ToggleGroupItem 
           value="bold" 
           aria-label="Toggle bold"
-          onClick={() => onStyleUpdate('fontWeight', activeText?.get('fontWeight') === 'bold' ? 'normal' : 'bold')}
-          className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
-          data-state={activeText?.get('fontWeight') === 'bold' ? 'on' : 'off'}
+          onClick={() => !disabled && onStyleUpdate('fontWeight', textStyle.bold ? 'normal' : 'bold')}
+          className={`h-8 w-8 p-0 transition-colors ${
+            textStyle.bold 
+              ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' 
+              : 'hover:bg-gray-100'
+          }`}
+          data-state={textStyle.bold ? 'on' : 'off'}
+          disabled={disabled}
         >
           <Bold className="h-4 w-4" />
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="italic" 
           aria-label="Toggle italic"
-          onClick={() => onStyleUpdate('fontStyle', activeText?.get('fontStyle') === 'italic' ? 'normal' : 'italic')}
-          className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
-          data-state={activeText?.get('fontStyle') === 'italic' ? 'on' : 'off'}
+          onClick={() => !disabled && onStyleUpdate('fontStyle', textStyle.italic ? 'normal' : 'italic')}
+          className={`h-8 w-8 p-0 transition-colors ${
+            textStyle.italic 
+              ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' 
+              : 'hover:bg-gray-100'
+          }`}
+          data-state={textStyle.italic ? 'on' : 'off'}
+          disabled={disabled}
         >
           <Italic className="h-4 w-4" />
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="underline" 
           aria-label="Toggle underline"
-          onClick={() => onStyleUpdate('underline', !activeText?.get('underline'))}
-          className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
-          data-state={activeText?.get('underline') ? 'on' : 'off'}
+          onClick={() => !disabled && onStyleUpdate('underline', !textStyle.underline)}
+          className={`h-8 w-8 p-0 transition-colors ${
+            textStyle.underline 
+              ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' 
+              : 'hover:bg-gray-100'
+          }`}
+          data-state={textStyle.underline ? 'on' : 'off'}
+          disabled={disabled}
         >
           <Underline className="h-4 w-4" />
         </ToggleGroupItem>
@@ -42,28 +66,44 @@ const TextStyleControls = ({ activeText, onStyleUpdate }: TextStyleControlsProps
 
       <ToggleGroup 
         type="single" 
-        className="justify-start bg-gray-50 p-1 rounded-md"
-        value={activeText?.get('textAlign') || 'left'}
-        onValueChange={(value) => value && onStyleUpdate('textAlign', value)}
+        className={`justify-start bg-gray-50 p-1 rounded-md ${disabled ? 'opacity-50' : ''}`}
+        value={textStyle.align}
+        onValueChange={(value) => !disabled && value && onStyleUpdate('textAlign', value)}
+        disabled={disabled}
       >
         <ToggleGroupItem 
           value="left" 
           aria-label="Align left"
-          className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
+          className={`h-8 w-8 p-0 transition-colors ${
+            textStyle.align === 'left' 
+              ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' 
+              : 'hover:bg-gray-100'
+          }`}
+          disabled={disabled}
         >
           <AlignLeft className="h-4 w-4" />
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="center" 
           aria-label="Align center"
-          className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
+          className={`h-8 w-8 p-0 transition-colors ${
+            textStyle.align === 'center' 
+              ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' 
+              : 'hover:bg-gray-100'
+          }`}
+          disabled={disabled}
         >
           <AlignCenter className="h-4 w-4" />
         </ToggleGroupItem>
         <ToggleGroupItem 
           value="right" 
           aria-label="Align right"
-          className="h-8 w-8 p-0 data-[state=on]:bg-white data-[state=on]:text-primary"
+          className={`h-8 w-8 p-0 transition-colors ${
+            textStyle.align === 'right' 
+              ? 'bg-purple-100 text-purple-700 hover:bg-purple-200' 
+              : 'hover:bg-gray-100'
+          }`}
+          disabled={disabled}
         >
           <AlignRight className="h-4 w-4" />
         </ToggleGroupItem>

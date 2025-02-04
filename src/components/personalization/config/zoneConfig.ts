@@ -18,6 +18,14 @@ export interface ProductZoneConfig {
   faces: ProductFaceZone[];
 }
 
+// Using percentage-based calculations for consistent zones
+const calculateZone = (baseSize: number) => ({
+  left: baseSize * 0.3,    // 30% from left
+  top: baseSize * 0.3,     // 30% from top
+  width: baseSize * 0.4,   // 40% of canvas width
+  height: baseSize * 0.4,  // 40% of canvas height
+});
+
 export const productZoneConfigs: ProductZoneConfig[] = [
   {
     id: "tshirts",
@@ -25,10 +33,7 @@ export const productZoneConfigs: ProductZoneConfig[] = [
       {
         sideId: "front",
         zone: {
-          left: 150,
-          top: 150,
-          width: 200,
-          height: 200,
+          ...calculateZone(500),
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
           borderWidth: 1
@@ -37,10 +42,7 @@ export const productZoneConfigs: ProductZoneConfig[] = [
       {
         sideId: "back",
         zone: {
-          left: 150,
-          top: 150,
-          width: 200,
-          height: 200,
+          ...calculateZone(500),
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
           borderWidth: 1
@@ -54,10 +56,7 @@ export const productZoneConfigs: ProductZoneConfig[] = [
       {
         sideId: "front",
         zone: {
-          left: 150,
-          top: 150,
-          width: 200,
-          height: 200,
+          ...calculateZone(500),
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
           borderWidth: 1
@@ -66,10 +65,7 @@ export const productZoneConfigs: ProductZoneConfig[] = [
       {
         sideId: "back",
         zone: {
-          left: 150,
-          top: 150,
-          width: 200,
-          height: 200,
+          ...calculateZone(500),
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
           borderWidth: 1
@@ -83,10 +79,8 @@ export const productZoneConfigs: ProductZoneConfig[] = [
       {
         sideId: "front",
         zone: {
-          left: 150,
-          top: 150,
-          width: 200,
-          height: 150,
+          ...calculateZone(500),
+          height: 150, // Special case for mugs
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
           borderWidth: 1
@@ -100,10 +94,7 @@ export const productZoneConfigs: ProductZoneConfig[] = [
       {
         sideId: "front",
         zone: {
-          left: 100,
-          top: 100,
-          width: 300,
-          height: 300,
+          ...calculateZone(500),
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
           borderWidth: 1
@@ -112,10 +103,7 @@ export const productZoneConfigs: ProductZoneConfig[] = [
       {
         sideId: "back",
         zone: {
-          left: 100,
-          top: 100,
-          width: 300,
-          height: 300,
+          ...calculateZone(500),
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
           borderWidth: 1
@@ -129,10 +117,8 @@ export const productZoneConfigs: ProductZoneConfig[] = [
       {
         sideId: "front",
         zone: {
-          left: 150,
-          top: 150,
-          width: 200,
-          height: 250,
+          ...calculateZone(500),
+          height: 250, // Special case for notebooks
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
           borderWidth: 1
@@ -146,10 +132,7 @@ export const productZoneConfigs: ProductZoneConfig[] = [
       {
         sideId: "front",
         zone: {
-          left: 150,
-          top: 150,
-          width: 200,
-          height: 200,
+          ...calculateZone(500),
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
           borderWidth: 1
@@ -158,10 +141,7 @@ export const productZoneConfigs: ProductZoneConfig[] = [
       {
         sideId: "back",
         zone: {
-          left: 150,
-          top: 150,
-          width: 200,
-          height: 200,
+          ...calculateZone(500),
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
           borderWidth: 1

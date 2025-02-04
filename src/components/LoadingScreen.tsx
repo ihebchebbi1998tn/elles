@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 
 const LoadingScreen = () => {
@@ -14,12 +15,12 @@ const LoadingScreen = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-6xl font-bold text-[#333333] font-oswald"
+            className="text-5xl font-bold text-[#333333] font-playfair"
           >
             ELLES
           </motion.h1>
-          <div className="mt-4 flex justify-center">
-            <div className="relative h-1.5 w-40">
+          <div className="mt-3 flex justify-center">
+            <div className="relative h-1.5 w-32">
               {/* Blue bar */}
               <motion.div
                 initial={{ scaleX: 0 }}
@@ -80,3 +81,4 @@ const LoadingScreen = () => {
 };
 
 export default LoadingScreen;
+

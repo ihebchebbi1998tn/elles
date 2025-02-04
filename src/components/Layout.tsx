@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingCart, Menu, X, Heart, ClipboardList, Search, PenLine, Trash2 } from "lucide-react";
+import { ShoppingCart, Menu, X, Heart, ClipboardList, Search, PenLine, Trash2, MessageCircle } from "lucide-react";
 import Footer from "./Footer";
 import { Link, useNavigate } from 'react-router-dom';
 import {
@@ -27,8 +27,22 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
     navigate('/devis');
   };
 
+  const handleWhatsAppSupport = () => {
+    window.open('https://wa.me/+21600000000', '_blank');
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
+      {/* WhatsApp Support Button */}
+      <button
+        onClick={handleWhatsAppSupport}
+        className="fixed left-6 bottom-6 z-50 bg-green-500 hover:bg-green-600 text-white p-3 rounded-full shadow-lg transition-all duration-300 hover:scale-110 flex items-center gap-2"
+        aria-label="Contact Support via WhatsApp"
+      >
+        <MessageCircle className="h-6 w-6" />
+        <span className="hidden md:inline text-sm font-medium">Support Technique</span>
+      </button>
+
       {/* Top Navigation - Social Media Bar */}
       <div className="w-full bg-primary py-2 text-sm text-white">
         <div className="container mx-auto flex items-center justify-between px-4">
@@ -55,7 +69,7 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
               )}
             </button>
             <Link to="/">
-              <img src="/logo.png" alt="ELLES" className="h-14" />
+              <img src="/logo.png" alt="ELLES" className="ml-5 object-contain" style={{ height: "80px", width: "170px" }} />
             </Link>
           </div>
 
@@ -113,25 +127,18 @@ export const Layout = ({ children }: { children: React.ReactNode }) => {
             </DropdownMenu>
             <button 
               onClick={handleDevisClick}
-              className="hidden md:flex items-center gap-1 text-primary hover:text-primary/80"
+              className="flex items-center gap-1 text-primary hover:text-primary/80"
             >
               <ClipboardList className="h-6 w-6" />
-              <span className="text-sm">Devis</span>
-            </button>
-            <button 
-              onClick={handleCartClick}
-              className="flex items-center gap-1 text-primary hover:text-primary/80 cursor-pointer"
-            >
-              <ShoppingCart className="h-6 w-6" />
-              <span className="text-sm">Mon panier ({cartCount})</span>
+              <span className="text-sm">Devis ({cartCount})</span>
             </button>
           </div>
         </div>
 
-        <div className={`md:relative md:inset-auto md:flex md:w-auto md:transform-none md:justify-start md:bg-transparent md:shadow-none ${
+        <div className={`md:relative md:inset-auto md:flex md:w-auto md:transform-none md:justify-start md:bg-transparent  shadow-black/10 border-b border-gray-300 ${
           isMenuOpen ? "block" : "hidden"
         }`}>
-          <div className="flex h-full flex-col items-start space-y-6 p-6 md:flex-row md:items-center md:space-y-0 md:space-x-12 md:p-0 md:pb-6 container mx-auto">
+          <div className="flex h-full flex-col items-start space-y-6 p-6 md:flex-row md:items-center md:space-y-0 md:space-x-12 md:p-0 md:pb-6 container mx-auto ">
             <div className="md:pl-16">
               <div className="flex flex-col md:flex-row md:items-center md:space-x-12">
                 <Link to="/metiers" className="nav-link w-full pb-6 text-left text-gray-600 hover:text-primary md:w-auto md:pb-6">

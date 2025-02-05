@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { FileText } from "lucide-react";
 import { Product } from "@/types/product";
@@ -43,14 +42,13 @@ const ValidationSidebar = ({
           {product?.name || "Votre produit personnalisé"}
         </h2>
         
-        <div className="space-y-4">
+        <div className="space-y-4">          
           <Button
             onClick={handleRequestQuote}
-            variant="outline"
-            className="w-full"
+            className="w-full bg-primary hover:bg-primary/90 text-white shadow-lg hover:shadow-xl transition-all duration-200 py-6"
             size="lg"
           >
-            <FileText className="mr-2 h-4 w-4" />
+            <FileText className="mr-2 h-5 w-5" />
             Demander un devis
           </Button>
         </div>

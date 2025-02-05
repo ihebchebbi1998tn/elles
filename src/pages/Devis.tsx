@@ -85,9 +85,22 @@ const Devis = () => {
       <div className="max-w-5xl mx-auto">
         {designData && (
           <Card className="p-6 mb-8">
-            <h2 className="text-xl font-semibold mb-4">
-              Devis ({designData.designNumber}) - {designData.productName}
-            </h2>
+            <div className="flex justify-between items-start mb-4">
+              <h2 className="text-xl font-semibold">
+                Devis ({designData.designNumber}) - {designData.productName}
+              </h2>
+              <div className="bg-primary/5 p-3 rounded-lg space-y-2">
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-gray-600">Taille:</span>
+                  <Badge variant="secondary">{designData.selectedSize}</Badge>
+                </div>
+                <div className="flex items-center gap-2 text-sm">
+                  <span className="text-gray-600">Quantité:</span>
+                  <Badge variant="secondary">{designData.quantity} unités</Badge>
+                </div>
+              </div>
+            </div>
+
             <div className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>

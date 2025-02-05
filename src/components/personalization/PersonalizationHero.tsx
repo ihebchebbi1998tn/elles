@@ -1,7 +1,56 @@
 import { Award, Clock, DollarSign, MessageSquare, Truck, Shield, Rocket, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import ProductCarousel from "./ProductCarousel";
+import { ProductCategory } from "./types";
+import { products } from "@/config/products";
+import { useEffect, useState, useRef } from "react";
 
-const PersonalizationHero = () => {
+interface PersonalizationHeroProps {
+  onCategorySelect: (categoryId: string) => void;
+  selectedCategory: string | null;
+}
+
+const PersonalizationHero = ({ onCategorySelect, selectedCategory }: PersonalizationHeroProps) => {
+  const [visibleSteps, setVisibleSteps] = useState<number[]>([]);
+  const stepsRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          // Show step 1 immediately when in view
+          setVisibleSteps([1]);
+
+          // Show step 2 after 1 second
+          const timer2 = setTimeout(() => {
+            setVisibleSteps(prev => [...prev, 2]);
+          }, 1000);
+
+          // Show step 3 after 2 seconds
+          const timer3 = setTimeout(() => {
+            setVisibleSteps(prev => [...prev, 3]);
+          }, 2000);
+
+          return () => {
+            clearTimeout(timer2);
+            clearTimeout(timer3);
+          };
+        }
+      },
+      {
+        threshold: 0.1 // Trigger when at least 10% of the element is visible
+      }
+    );
+
+    if (stepsRef.current) {
+      observer.observe(stepsRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
   const handleScrollToProducts = () => {
     const productsSection = document.querySelector('#products-section');
     if (productsSection) {
@@ -11,6 +60,14 @@ const PersonalizationHero = () => {
       });
     }
   };
+
+  // Convert products config to ProductCategory type
+  const productCategories: ProductCategory[] = products.map(product => ({
+    id: product.id,
+    name: product.name,
+    description: product.description,
+    startingPrice: product.startingPrice
+  }));
 
   return (
     <div className="relative">
@@ -67,12 +124,12 @@ const PersonalizationHero = () => {
       </div>
 
       {/* Process Section */}
-      <div id="products-section" className="max-w-7xl mx-auto px-4 py-16">
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
+      <div id="products-section" className="max-w-7xl mx-auto px-4 py-8">
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-8">
           Votre design en <span className="text-secondary">3 étapes simples</span>
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
           <div className="flex flex-col items-center text-center p-8 bg-white rounded-xl shadow-lg hover:shadow-xl transition-all animate-fade-in">
             <div className="w-16 h-16 bg-secondary rounded-full flex items-center justify-center text-primary text-2xl font-bold mb-6">
               1
@@ -94,6 +151,17 @@ const PersonalizationHero = () => {
             <h3 className="text-xl font-semibold mb-4">Devis rapide</h3>
             <p className="text-gray-600">Recevez votre devis personnalisé sous 48h</p>
           </div>
+        </div>
+      </div>
+
+      {/* Product Carousel Section */}
+      <div className="container mx-auto py-6 px-4">
+        <div className="max-w-[1600px] mx-auto">
+          <ProductCarousel
+            categories={productCategories}
+            selectedCategory={selectedCategory}
+            onCategorySelect={onCategorySelect}
+          />
         </div>
       </div>
     </div>

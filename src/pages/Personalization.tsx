@@ -2,9 +2,9 @@ import { useState, useEffect } from "react";
 import { Canvas, Text } from "fabric";
 import { toast } from "sonner";
 import { ProductCategory, UploadedImage } from "@/components/personalization/types";
-import ProductCarousel from "@/components/personalization/ProductCarousel";
 import MinimizedProductCarousel from "@/components/personalization/MinimizedProductCarousel";
 import PersonalizationHero from "@/components/personalization/PersonalizationHero";
+import ProcessSection from "@/components/personalization/ProcessSection";
 import LoadingScreen from "@/components/LoadingScreen";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { products } from "@/config/products";
@@ -12,14 +12,6 @@ import PersonalizationHeader from "@/components/personalization/PersonalizationH
 import DesignWorkspace from "@/components/personalization/DesignWorkspace";
 import ProductSwitchDialog from "@/components/personalization/ProductSwitchDialog";
 import { productSidesConfigs } from "@/components/personalization/config/productSidesConfig";
-
-// Convert products config to ProductCategory type
-const productCategories: ProductCategory[] = products.map(product => ({
-  id: product.id,
-  name: product.name,
-  description: product.description,
-  startingPrice: product.startingPrice
-}));
 
 const Personalization = () => {
   const [canvas, setCanvas] = useState<Canvas | null>(null);
@@ -165,17 +157,19 @@ const Personalization = () => {
 
   return (
     <div className="max-w-[100vw] overflow-x-hidden">
-      {!selectedCategory && <PersonalizationHero />}
+      {!selectedCategory && (
+        <>
+          <PersonalizationHero 
+            selectedCategory={selectedCategory}
+            onCategorySelect={handleCategorySelect}
+          />
+          <ProcessSection />
+        </>
+      )}
       
       <div className="container mx-auto py-6 px-4 lg:py-12">
         <div className="max-w-[1600px] mx-auto">
-          {!selectedCategory ? (
-            <ProductCarousel
-              categories={productCategories}
-              selectedCategory={selectedCategory}
-              onCategorySelect={handleCategorySelect}
-            />
-          ) : (
+          {selectedCategory && (
             <>
               {isLoading ? (
                 <div className="min-h-[60vh] flex flex-col items-center justify-center">

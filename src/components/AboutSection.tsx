@@ -1,3 +1,4 @@
+
 const AboutSection = () => {
   return (
     <section id="about" className="bg-muted py-20">
@@ -5,7 +6,7 @@ const AboutSection = () => {
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="relative h-[400px] rounded-lg overflow-hidden">
             <img
-              src="https://placehold.co/800x400"
+              src="/AboutImage.png"
               alt="Notre Histoire"
               className="absolute inset-0 w-full h-full object-cover"
             />

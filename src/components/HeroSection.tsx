@@ -1,11 +1,27 @@
+
 import { useEffect, useState } from 'react';
-import { ArrowDown, Instagram, Facebook, Linkedin } from 'lucide-react';
 
 export const HeroSection = () => {
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [scrollY, setScrollY] = useState(0);
-  const [colorIndex, setColorIndex] = useState(0);
 
-  const colors = ['#A7C6ED', '#C1A7F5', '#F5E56B', '#333333'];
+  const slides = [
+    {
+      image: '/lovable-uploads/1.png',
+      title: "L'Élégance\nProfessionnelle",
+      subtitle: "Découvrez notre collection exclusive de tenues professionnelles"
+    },
+    {
+      image: '/lovable-uploads/2.png',
+      title: "Style &\nRaffinement",
+      subtitle: "Une collection qui allie confort et élégance"
+    },
+    {
+      image: '/lovable-uploads/3.png',
+      title: "Excellence\nArtisanale",
+      subtitle: "Des pièces uniques créées avec passion"
+    }
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -17,76 +33,64 @@ export const HeroSection = () => {
   }, []);
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setColorIndex((prev) => (prev + 1) % colors.length);
-    }, 2000);
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 4000);
 
-    return () => clearInterval(interval);
+    return () => clearInterval(timer);
   }, []);
 
+  const handleDotClick = (index: number) => {
+    setCurrentSlide(index);
+  };
+
   return (
-    <section className="relative min-h-[90vh] overflow-hidden">
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-300 ease-out"
-        style={{
-          backgroundImage: 'url("https://placehold.co/1920x1080")',
-          transform: `translateY(${scrollY * 0.5}px)`,
-        }}
-      />
+    <section className="relative min-h-[56vh] overflow-hidden">
+      {slides.map((slide, index) => (
+        <div
+          key={index}
+          className={`absolute inset-0 bg-cover bg-center bg-no-repeat transition-opacity duration-1000 ease-in-out ${
+            currentSlide === index ? 'opacity-100' : 'opacity-0'
+          }`}
+          style={{
+            backgroundImage: `url("${slide.image}")`,
+          }}
+        />
+      ))}
       
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-black/40" />
+      {/* Overlay with gradient */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/60" />
 
       {/* Content */}
-      <div className="relative z-10 flex min-h-[90vh] items-center justify-center px-4">
+      <div className="relative z-10 flex min-h-[56vh] items-center justify-center px-4">
         <div className="text-center text-white">
-          <h1 className="animate-fade-in font-sans text-5xl font-bold leading-tight md:text-7xl">
-            L'Élégance<br />
-            Professionnelle
+          <h1 className="animate-fade-in font-sans text-4xl font-bold leading-tight md:text-6xl whitespace-pre-line mb-6">
+            {slides[currentSlide].title}
           </h1>
-          <p className="mt-6 animate-fade-in-delayed font-body text-xl md:text-2xl">
-            Découvrez notre collection exclusive de tenues professionnelles
+          <p className="mt-4 animate-fade-in-delayed font-body text-lg md:text-xl mb-8">
+            {slides[currentSlide].subtitle}
           </p>
           <a
             href="#products"
-            className="group mt-8 inline-block animate-fade-in-delayed rounded-full bg-white px-8 py-4 font-sans font-semibold text-primary transition-all duration-300 hover:bg-primary hover:text-white hover:shadow-lg"
+            className="group inline-block animate-fade-in-delayed rounded-full bg-white px-8 py-3 font-sans font-semibold text-primary transition-all duration-300 hover:bg-primary hover:text-white hover:shadow-lg"
           >
             Explorer la Collection
           </a>
-          
-          {/* Scroll Down Arrow */}
-          <div className="absolute bottom-12 left-1/2 -translate-x-1/2 animate-bounce">
-            <ArrowDown className="h-8 w-8 text-white" />
+
+          {/* Navigation Dots */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex space-x-3">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handleDotClick(index)}
+                className={`w-2.5 h-2.5 rounded-full transition-all duration-300 ${
+                  currentSlide === index ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/75'
+                }`}
+                aria-label={`Go to slide ${index + 1}`}
+              />
+            ))}
           </div>
         </div>
-      </div>
-
-      {/* Social Media Icons */}
-      <div className="fixed bottom-8 right-8 z-50 flex flex-col gap-4">
-        <a 
-          href="#instagram" 
-          className="rounded-full bg-white p-3 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
-          aria-label="Instagram"
-          style={{ color: colors[colorIndex] }}
-        >
-          <Instagram className="h-6 w-6" />
-        </a>
-        <a 
-          href="#facebook" 
-          className="rounded-full bg-white p-3 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
-          aria-label="Facebook"
-          style={{ color: colors[colorIndex] }}
-        >
-          <Facebook className="h-6 w-6" />
-        </a>
-        <a 
-          href="#linkedin" 
-          className="rounded-full bg-white p-3 shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl"
-          aria-label="LinkedIn"
-          style={{ color: colors[colorIndex] }}
-        >
-          <Linkedin className="h-6 w-6" />
-        </a>
       </div>
     </section>
   );

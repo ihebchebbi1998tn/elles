@@ -1,3 +1,4 @@
+
 import { ProductConfig } from "@/config/products";
 import { cn } from "@/lib/utils";
 import {
@@ -21,40 +22,35 @@ const MinimizedProductCarousel = ({
 }: MinimizedProductCarouselProps) => {
   return (
     <div className="w-full py-4">
-      <div className="max-w-4xl mx-auto relative">
+      <div className="max-w-4xl mx-auto px-16 relative">
         <Carousel
           opts={{
             align: "start",
             loop: true,
-            slidesToScroll: 1,
-            slides: {
-              perView: 4,
-              spacing: 16,
-            } as any, // Type assertion to fix the error
           }}
           className="w-full"
         >
-          <CarouselContent>
+          <CarouselContent className="-ml-4">
             {products.map((product) => (
-              <CarouselItem key={product.id} className="basis-1/4">
+              <CarouselItem key={product.id} className="pl-4 basis-1/4">
                 <div
                   onClick={() => onProductSelect(product.id)}
                   className={cn(
-                    "cursor-pointer rounded-lg overflow-hidden border transition-all duration-300",
+                    "cursor-pointer rounded-lg overflow-hidden border transition-all duration-300 h-[190px]", // Fixed height for consistency
                     selectedProduct === product.id
                       ? "border-primary shadow-lg"
                       : "border-gray-200 hover:border-primary/50"
                   )}
                 >
-                  <div className="h-[120px] overflow-hidden">
+                  <div className="h-[120px] w-full flex items-center justify-center p-2">
                     <img
                       src={product.image || "https://placehold.co/800x800"}
                       alt={product.name}
-                      className="h-full w-full object-cover"
+                      className="max-h-full max-w-full h-auto w-auto object-contain"
                     />
                   </div>
                   <div className="p-3">
-                    <h4 className="font-medium text-sm">{product.name}</h4>
+                    <h4 className="font-medium text-sm line-clamp-1">{product.name}</h4>
                     <p className="text-xs text-primary mt-1">
                       À partir de {product.startingPrice} TND
                     </p>
@@ -63,8 +59,8 @@ const MinimizedProductCarousel = ({
               </CarouselItem>
             ))}
           </CarouselContent>
-          <CarouselPrevious className="absolute -left-12 top-1/2 transform -translate-y-1/2" />
-          <CarouselNext className="absolute -right-12 top-1/2 transform -translate-y-1/2" />
+          <CarouselPrevious className="absolute -left-8 top-1/2 transform -translate-y-1/2" />
+          <CarouselNext className="absolute -right-8 top-1/2 transform -translate-y-1/2" />
         </Carousel>
       </div>
     </div>

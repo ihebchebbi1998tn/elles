@@ -1,9 +1,11 @@
-import { useState, useEffect } from 'react';
+
+import { useState, useEffect, ReactNode } from 'react';
 import { Layout } from './Layout';
 import LoadingScreen from './LoadingScreen';
+import Newsletter from './Newsletter';
 
 interface PageWrapperProps {
-  children: React.ReactNode;
+  children: ReactNode;
 }
 
 const PageWrapper = ({ children }: PageWrapperProps) => {
@@ -22,14 +24,15 @@ const PageWrapper = ({ children }: PageWrapperProps) => {
     return () => clearTimeout(timer);
   }, [children]); // Reset loading state when children (content) changes
 
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <Layout>
-      {isLoading ? (
-        <LoadingScreen />
-      ) : (
-        children
-      )}
-    </Layout>
+    <>
+      {children}
+      <Newsletter />
+    </>
   );
 };
 

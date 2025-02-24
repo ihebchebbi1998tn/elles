@@ -88,8 +88,8 @@ const Homme = () => {
                     <p className="text-sm text-gray-500">Brand</p>
                     <h3 className="font-medium">Product Name</h3>
                     <div className="flex justify-between items-center mt-1">
-                      <p className="text-sm line-through text-gray-400">59.99 € TTC</p>
-                      <p className="font-bold text-primary">44.40 € TTC</p>
+                      <p className="text-sm line-through text-gray-400">59.99 TND TTC</p>
+                      <p className="font-bold text-primary">44.40 TND TTC</p>
                     </div>
                   </div>
                 </div>

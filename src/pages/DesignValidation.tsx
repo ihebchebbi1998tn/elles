@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CheckCircle, FileDown } from "lucide-react";
+import { ArrowLeft, CheckCircle, FileDown, Heart } from "lucide-react";
 import { useCartStore } from "@/components/cart/CartProvider";
 import { toast } from "sonner";
 import { products } from "@/config/products";
@@ -12,6 +12,16 @@ import CustomizationOptions from "@/components/design-validation/CustomizationOp
 import { generateDesignPDF } from "@/utils/pdfGenerator";
 import { Canvas } from "fabric";
 import { useDesignState } from "@/components/personalization/hooks/useDesignState";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 const sizeOptions = [
   {
@@ -56,7 +66,8 @@ const DesignValidation = () => {
   const [canvas, setCanvas] = useState<Canvas | null>(null);
   const [sizeQuantities, setSizeQuantities] = useState<{ [size: string]: number }>({});
   const [totalQuantity, setTotalQuantity] = useState(0);
-  const designData = location.state?.designData;
+  const [showClearDialog, setShowClearDialog] = useState(false);
+  const designData = location.state?.designs;
 
   const {
     setText,
@@ -65,7 +76,6 @@ const DesignValidation = () => {
     setContentItems
   } = useDesignState();
 
-  // Get the product information from localStorage or designData
   const storedProductName = localStorage.getItem('selectedProductName');
   const storedProductId = localStorage.getItem('selectedProductId');
   const currentProductId = storedProductId || designData?.productId;
@@ -73,18 +83,36 @@ const DesignValidation = () => {
   const currentProductName = storedProductName || designData?.productName || currentProduct?.name || 'Produit non trouvé';
 
   useEffect(() => {
-    const designs: { [key: string]: FaceDesign } = {};
-    for (let i = 0; i < localStorage.length; i++) {
-      const key = localStorage.key(i);
-      if (key?.startsWith('design-')) {
-        const value = localStorage.getItem(key);
-        if (value) {
-          designs[key] = JSON.parse(value);
+    if (designData) {
+      setCachedDesigns(designData);
+    } else {
+      const designs: { [key: string]: FaceDesign } = {};
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key?.startsWith('design-')) {
+          const value = localStorage.getItem(key);
+          if (value) {
+            designs[key] = JSON.parse(value);
+          }
         }
       }
+      setCachedDesigns(designs);
     }
-    setCachedDesigns(designs);
-  }, []);
+  }, [designData]);
+
+  const clearAllDesigns = () => {
+    Object.keys(localStorage).forEach(key => {
+      if (key.startsWith('design-')) {
+        localStorage.removeItem(key);
+      }
+    });
+    setCachedDesigns(null);
+    setText('');
+    setActiveText(null);
+    setUploadedImages([]);
+    setContentItems([]);
+    toast.success("Designs effacés !");
+  };
 
   const handleQuantityChange = (value: number) => {
     if (value >= 1 && value <= 999) {
@@ -115,8 +143,25 @@ const DesignValidation = () => {
   };
 
   const handleBack = () => {
+    setShowClearDialog(true);
+  };
+
+  const handleNavigateAway = () => {
+    clearAllDesigns();
     navigate(-1);
   };
+
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      clearAllDesigns();
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   const getAllSavedDesigns = () => {
     const designs: { [key: string]: FaceDesign } = {};
@@ -137,11 +182,9 @@ const DesignValidation = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Set canvas size - 10x larger than the actual size
     canvas.width = 1000;
     canvas.height = 200;
 
-    // Set text properties with 10x larger size
     ctx.fillStyle = text.color;
     const fontWeight = text.style.bold ? 'bold' : 'normal';
     const fontStyle = text.style.italic ? 'italic' : 'normal';
@@ -149,7 +192,6 @@ const DesignValidation = () => {
     ctx.textAlign = text.style.align as CanvasTextAlign;
     ctx.textBaseline = 'middle';
 
-    // Draw text
     ctx.fillText(text.content, canvas.width / 2, canvas.height / 2);
     if (text.style.underline) {
       const textMetrics = ctx.measureText(text.content);
@@ -162,7 +204,6 @@ const DesignValidation = () => {
       ctx.stroke();
     }
 
-    // Create download link
     const link = document.createElement('a');
     link.download = `text-preview-${Date.now()}.png`;
     link.href = canvas.toDataURL('image/png');
@@ -189,49 +230,35 @@ const DesignValidation = () => {
     );
   };
 
-  const handleClearDesigns = () => {
-    if (!canvas) return;
-    
-    // Store the background image before clearing
-    const backgroundImage = canvas.backgroundImage;
-    
-    // Clear all objects except background
-    const objects = canvas.getObjects();
-    objects.forEach(obj => {
-      if (obj !== backgroundImage) {
-        canvas.remove(obj);
-      }
-    });
-    
-    // Restore background image if it exists
-    if (backgroundImage) {
-      canvas.backgroundImage = backgroundImage;
-      canvas.renderAll();
-    }
-    
-    // Clear localStorage designs
-    Object.keys(localStorage).forEach(key => {
-      if (key.startsWith('design-')) {
-        localStorage.removeItem(key);
-      }
-    });
-    
-    setText('');
-    setActiveText(null);
-    setUploadedImages([]);
-    setContentItems([]);
-    canvas.renderAll();
-    toast.success("Design précédent effacé !");
-  };
+  const handleSaveForLater = () => {
+    const allDesigns = getAllSavedDesigns();
+    const favoriteDesign = {
+      id: Date.now().toString(),
+      productName: currentProductName,
+      date: new Date().toISOString(),
+      designs: allDesigns
+    };
 
-  if (!designData && !cachedDesigns) {
-    navigate('/personalization');
-    return null;
-  }
+    const existingFavorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    const isDuplicate = existingFavorites.some(
+      (favorite: any) => favorite.productName === currentProductName
+    );
+
+    if (isDuplicate) {
+      toast.info("Ce design est déjà sauvegardé dans vos favoris");
+      return;
+    }
+
+    const updatedFavorites = [...existingFavorites, favoriteDesign];
+    localStorage.setItem('favorites', JSON.stringify(updatedFavorites));
+
+    toast.success("Design sauvegardé dans vos favoris !");
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      <div className="container mx-auto py-8 px-4">
+      <div className="container mx-auto py-8 px-4 lg:py-12">
         <Button
           variant="ghost"
           onClick={handleBack}
@@ -250,20 +277,30 @@ const DesignValidation = () => {
               Validation de votre design
             </h1>
           </div>
-          <Button
-            onClick={handleDownloadPDF}
-            variant="outline"
-            className="gap-2 hover:bg-primary/5"
-          >
-            <FileDown className="h-4 w-4" />
-            Télécharger les spécifications
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={handleDownloadPDF}
+              variant="outline"
+              className="gap-2 hover:bg-primary/5"
+            >
+              <FileDown className="h-4 w-4" />
+              Télécharger les spécifications
+            </Button>
+            <Button
+              onClick={handleSaveForLater}
+              variant="outline"
+              className="gap-2 hover:bg-primary/5"
+            >
+              <Heart className="h-4 w-4" />
+              Sauvegarder pour plus tard
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           <div className="lg:col-span-8">
             <DesignPreviewList
-              designs={cachedDesigns || getAllSavedDesigns()}
+              designs={cachedDesigns || {}}
               onDownloadText={handleDownloadText}
               onDownloadImage={handleDownloadImage}
             />
@@ -292,6 +329,21 @@ const DesignValidation = () => {
           </div>
         </div>
       </div>
+
+      <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Attention</AlertDialogTitle>
+            <AlertDialogDescription>
+              Si vous quittez cette page sans demander un devis, tous vos designs seront effacés. Voulez-vous continuer ?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowClearDialog(false)}>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={handleNavigateAway}>Continuer et effacer</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

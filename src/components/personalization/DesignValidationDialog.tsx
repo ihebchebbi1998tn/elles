@@ -1,3 +1,4 @@
+
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -151,8 +152,8 @@ const DesignValidationDialog = ({
                     className="w-full h-full object-contain"
                   />
                 </div>
-                <div className="space-y-2">
-                  {design.textElements.map((text, index) => (
+                <div className="mt-4 space-y-2">
+                  {design.textElements.map((text: any, index: number) => (
                     <div key={index} className="text-sm text-gray-600">
                       <p>Texte: {text.content}</p>
                       <p>Police: {text.font}</p>
@@ -162,8 +163,8 @@ const DesignValidationDialog = ({
                     </div>
                   ))}
                 </div>
-                <div className="space-y-2">
-                  {design.uploadedImages.map((image, index) => (
+                <div className="mt-4 space-y-2">
+                  {design.uploadedImages.map((image: any, index: number) => (
                     <div key={index} className="text-sm text-gray-600">
                       <p>Image: {image.name}</p>
                       <Button

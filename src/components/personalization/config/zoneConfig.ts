@@ -1,3 +1,4 @@
+
 interface Zone {
   left: number;
   top: number;
@@ -28,7 +29,65 @@ const calculateZone = (baseSize: number) => ({
 
 export const productZoneConfigs: ProductZoneConfig[] = [
   {
-    id: "tshirts",
+    id: "tshirt",
+    faces: [
+      {
+        sideId: "front",
+        zone: {
+          left: 165,    // 30% from left
+          top: 100,     // 30% from top
+          width: 180,   // 40% of canvas width
+          height: 260,  // 40% of canvas height
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      },
+      {
+        sideId: "back",
+        zone: {
+          left: 165,    // 30% from left
+          top: 90,     // 30% from top
+          width: 190,   // 40% of canvas width
+          height: 260,  // 40% of canvas height
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      }
+    ]
+  },
+  {
+    id: "buttons-tshirt",
+    faces: [
+      {
+        sideId: "front",
+        zone: {
+          left: 100,    // 30% from left
+          top: 180,     // 30% from top
+          width: 310,   // 40% of canvas width
+          height: 300,  // 40% of canvas height
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      },
+      {
+        sideId: "back",
+        zone: {
+          left: 160,    // 30% from left
+          top: 80,     // 30% from top
+          width: 190,   // 40% of canvas width
+          height: 320,  // 40% of canvas height
+          backgroundColor: "rgba(255, 255, 255, 0.1)",
+          borderColor: "#cccccc",
+          borderWidth: 1
+        }
+      }
+    ]
+  },
+  {
+    id: "long-sleeves",
     faces: [
       {
         sideId: "front",
@@ -51,21 +110,32 @@ export const productZoneConfigs: ProductZoneConfig[] = [
     ]
   },
   {
-    id: "blouses",
+    id: "marketing-flag",
     faces: [
       {
         sideId: "front",
         zone: {
-          ...calculateZone(500),
+          left: 170,    // 30% from left
+          top: 30,     // 30% from top
+          width: 150,   // 40% of canvas width
+          height: 450,
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
-          borderWidth: 1
+          borderWidth: 1,
         }
-      },
+      }
+    ]
+  },
+  {
+    id: "tablier",
+    faces: [
       {
-        sideId: "back",
+        sideId: "front",
         zone: {
-          ...calculateZone(500),
+          left: 170,    // 30% from left
+          top: 140,     // 30% from top
+          width: 190,   // 40% of canvas width
+          height: 330,  // 40% of canvas height
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
           borderWidth: 1
@@ -74,22 +144,24 @@ export const productZoneConfigs: ProductZoneConfig[] = [
     ]
   },
   {
-    id: "mugs",
+    id: "mug",
     faces: [
       {
         sideId: "front",
         zone: {
-          ...calculateZone(500),
-          height: 150, // Special case for mugs
+          left: 60,    // 30% from left
+          top: 110,     // 30% from top
+          width: 260,   // 40% of canvas width
+          height: 300,  // 40% of canvas height
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
-          borderWidth: 1
+          borderWidth: 1,
         }
       }
     ]
   },
   {
-    id: "flyers",
+    id: "notebook",
     faces: [
       {
         sideId: "front",
@@ -97,49 +169,20 @@ export const productZoneConfigs: ProductZoneConfig[] = [
           ...calculateZone(500),
           backgroundColor: "rgba(255, 255, 255, 0.1)",
           borderColor: "#cccccc",
-          borderWidth: 1
-        }
-      },
-      {
-        sideId: "back",
-        zone: {
-          ...calculateZone(500),
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
-          borderColor: "#cccccc",
-          borderWidth: 1
+          borderWidth: 1,
+          left: 60,    // 30% from left
+          top: 110,     // 30% from top
+          width: 260,   // 40% of canvas width
+          height: 300,  // 40% of canvas height
         }
       }
     ]
   },
   {
-    id: "notebooks",
+    id: "bag",
     faces: [
       {
         sideId: "front",
-        zone: {
-          ...calculateZone(500),
-          height: 250, // Special case for notebooks
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
-          borderColor: "#cccccc",
-          borderWidth: 1
-        }
-      }
-    ]
-  },
-  {
-    id: "bags",
-    faces: [
-      {
-        sideId: "front",
-        zone: {
-          ...calculateZone(500),
-          backgroundColor: "rgba(255, 255, 255, 0.1)",
-          borderColor: "#cccccc",
-          borderWidth: 1
-        }
-      },
-      {
-        sideId: "back",
         zone: {
           ...calculateZone(500),
           backgroundColor: "rgba(255, 255, 255, 0.1)",

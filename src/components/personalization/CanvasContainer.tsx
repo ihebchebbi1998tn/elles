@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Canvas, Rect, Image as FabricImage, Point } from "fabric";
+import { Canvas, Rect, Image as FabricImage, Point, filters } from "fabric";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
@@ -10,6 +10,8 @@ import { toast } from "sonner";
 import { productSideImages } from "./config/productSideImagesConfig";
 import FaceConfirmationDialog from "./FaceConfirmationDialog";
 import { FaceDesign } from "./types/faceDesign";
+import ProductColorSelector from "./ProductColorSelector";
+import { productColors } from "./config/productColorsConfig";
 
 interface CanvasContainerProps {
   canvas: Canvas | null;
@@ -37,8 +39,8 @@ const CanvasContainer = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const productConfig = productSidesConfigs.find((config) => config.id === selectedCategory);
   const zoneConfig = productZoneConfigs.find((config) => config.id === selectedCategory);
-  const productImages = productSideImages.find(p => p.productId === selectedCategory)?.sides || [];
-  const currentSideImage = productImages.find(img => img.sideId === selectedSide);
+  const currentProductColors = productColors.find(p => p.productId === selectedCategory);
+  const currentSideImage = currentProductColors?.colors.find(c => c.sideId === selectedSide);
   const currentZone = zoneConfig?.faces.find(face => face.sideId === selectedSide)?.zone;
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [targetSide, setTargetSide] = useState<string>("");
@@ -128,6 +130,32 @@ const CanvasContainer = ({
     }
   };
 
+  const handleDeleteAll = () => {
+    if (!canvas) return;
+    
+    // Store the background image and customization zone
+    const backgroundImage = canvas.backgroundImage;
+    const zoneObject = canvas.getObjects().find(obj => 
+      obj.type === 'rect' && !obj.selectable && !obj.evented
+    );
+    
+    // Clear only content objects (not background or zone)
+    const objects = canvas.getObjects();
+    objects.forEach(obj => {
+      if (obj !== backgroundImage && obj !== zoneObject) {
+        canvas.remove(obj);
+      }
+    });
+
+    // Clear localStorage designs for current category and side
+    const designKey = `design-${selectedCategory}-${selectedSide}`;
+    localStorage.removeItem(designKey);
+    
+    canvas.renderAll();
+    onObjectDelete(); // This will trigger parent component cleanup
+    toast.success("Tout le contenu a été supprimé !");
+  };
+
   useEffect(() => {
     if (!canvasRef.current) return;
 
@@ -150,7 +178,7 @@ const CanvasContainer = ({
     // Scale zone configuration based on canvas size
     const scaleFactor = canvasSize / 500; // 500 is our base size
 
-    // Add event listener for object movement with debounced boundary check
+    // Add event listeners for object movement with debounced boundary check
     let animationFrameId: number;
     newCanvas.on('object:moving', (e) => {
       const obj = e.target;
@@ -175,27 +203,32 @@ const CanvasContainer = ({
       });
     });
 
-    // Add event listener for object scaling
+    // Add event listener for object scaling with enhanced constraints
     newCanvas.on('object:scaling', (e) => {
       const obj = e.target;
       if (!obj || !currentZone) return;
       
-      const objBounds = obj.getBoundingRect();
-      const zoneLeft = currentZone.left;
-      const zoneTop = currentZone.top;
-      const zoneRight = zoneLeft + currentZone.width;
-      const zoneBottom = zoneTop + currentZone.height;
+      const scaledObjBounds = obj.getBoundingRect();
+      const zoneLeft = currentZone.left * scaleFactor;
+      const zoneTop = currentZone.top * scaleFactor;
+      const zoneWidth = currentZone.width * scaleFactor;
+      const zoneHeight = currentZone.height * scaleFactor;
 
-      // Check if scaled object exceeds zone boundaries
-      if (objBounds.left < zoneLeft ||
-          objBounds.top < zoneTop ||
-          objBounds.left + objBounds.width > zoneRight ||
-          objBounds.top + objBounds.height > zoneBottom) {
-        showOutOfBoundsToast();
+      // Check if scaled object exceeds zone boundaries or maximum allowed size
+      if (scaledObjBounds.width > zoneWidth ||
+          scaledObjBounds.height > zoneHeight ||
+          scaledObjBounds.left < zoneLeft ||
+          scaledObjBounds.top < zoneTop ||
+          scaledObjBounds.left + scaledObjBounds.width > zoneLeft + zoneWidth ||
+          scaledObjBounds.top + scaledObjBounds.height > zoneTop + zoneHeight) {
+        
+        // Revert to last valid scale
         obj.scaleX = obj.lastScaleX || obj.scaleX;
         obj.scaleY = obj.lastScaleY || obj.scaleY;
         obj.setCoords();
+        showOutOfBoundsToast();
       } else {
+        // Store last valid scale
         obj.lastScaleX = obj.scaleX;
         obj.lastScaleY = obj.scaleY;
       }
@@ -247,6 +280,7 @@ const CanvasContainer = ({
             strokeDashArray: [6, 6],
             selectable: false,
             evented: false,
+            excludeFromExport: true, // Add this line to exclude zones from export
           });
           newCanvas.add(zone);
           newCanvas.renderAll();
@@ -262,6 +296,8 @@ const CanvasContainer = ({
         cancelAnimationFrame(animationFrameId);
       }
       newCanvas.dispose();
+      newCanvas.off('object:moving');
+      newCanvas.off('object:scaling');
     };
   }, [selectedCategory, selectedSide, isMobile]);
 
@@ -337,6 +373,25 @@ const CanvasContainer = ({
     toast.success(`Design de la ${selectedSide} sauvegardé !`);
   };
 
+  const handleColorSelect = (imageUrl: string) => {
+    if (!canvas) return;
+    
+    // Load and set the new background image
+    FabricImage.fromURL(imageUrl, {
+      crossOrigin: 'anonymous'
+    }).then((img) => {
+      img.scaleToWidth(canvas.width!);
+      img.scaleToHeight(canvas.height!);
+      img.set({
+        selectable: false,
+        evented: false,
+      });
+      canvas.backgroundImage = img;
+      canvas.renderAll();
+      toast.success("Couleur appliquée !");
+    });
+  };
+
   return (
     <div className="space-y-4">
       <ProductSideSelector
@@ -344,6 +399,11 @@ const CanvasContainer = ({
         activeSide={selectedSide}
         onSideSelect={handleSideSelect}
         selectedCategory={selectedCategory}
+      />
+      <ProductColorSelector
+        selectedCategory={selectedCategory}
+        selectedSide={selectedSide}
+        onColorSelect={handleColorSelect}
       />
       <Card className="p-4 relative">
         <div className="flex justify-center">
@@ -353,7 +413,7 @@ const CanvasContainer = ({
           variant="destructive"
           size="icon"
           className="absolute top-4 right-4"
-          onClick={onObjectDelete}
+          onClick={handleDeleteAll}
         >
           <Trash2 className="h-4 w-4" />
         </Button>

@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 
 const LoadingScreen = () => {
@@ -15,13 +14,13 @@ const LoadingScreen = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-5xl font-bold text-[#333333] font-playfair"
+            className="text-[2.25rem] font-bold text-[#333333] font-playfair" // Reduced from text-5xl (3rem) to 2.25rem (approximately 10% smaller)
           >
             ELLES
           </motion.h1>
           <div className="mt-3 flex justify-center">
             <div className="relative h-1.5 w-32">
-              {/* Blue bar */}
+              {/* Black bar */}
               <motion.div
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
@@ -31,20 +30,7 @@ const LoadingScreen = () => {
                   repeatType: "reverse",
                   ease: "easeInOut",
                 }}
-                className="absolute h-full w-full origin-left bg-[#2a98cb] opacity-80"
-              />
-              {/* Pink bar */}
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{
-                  duration: 1,
-                  repeat: Infinity,
-                  repeatType: "reverse",
-                  ease: "easeInOut",
-                  delay: 0.2,
-                }}
-                className="absolute h-full w-full origin-left bg-[#d175a1] opacity-80"
+                className="absolute h-full w-full origin-left bg-[#000000] opacity-80"
               />
               {/* Yellow bar */}
               <motion.div
@@ -55,11 +41,24 @@ const LoadingScreen = () => {
                   repeat: Infinity,
                   repeatType: "reverse",
                   ease: "easeInOut",
-                  delay: 0.4,
+                  delay: 0.2,
                 }}
                 className="absolute h-full w-full origin-left bg-[#fdeb1d] opacity-80"
               />
-              {/* Black bar */}
+              {/* Pink bar */}
+              <motion.div
+                initial={{ scaleX: 0 }}
+                animate={{ scaleX: 1 }}
+                transition={{
+                  duration: 1,
+                  repeat: Infinity,
+                  repeatType: "reverse",
+                  ease: "easeInOut",
+                  delay: 0.4,
+                }}
+                className="absolute h-full w-full origin-left bg-[#e60d7e] opacity-80"
+              />
+              {/* Blue bar */}
               <motion.div
                 initial={{ scaleX: 0 }}
                 animate={{ scaleX: 1 }}
@@ -70,7 +69,7 @@ const LoadingScreen = () => {
                   ease: "easeInOut",
                   delay: 0.6,
                 }}
-                className="absolute h-full w-full origin-left bg-[#040404] opacity-80"
+                className="absolute h-full w-full origin-left bg-[#199ddb] opacity-80"
               />
             </div>
           </div>
@@ -81,4 +80,3 @@ const LoadingScreen = () => {
 };
 
 export default LoadingScreen;
-

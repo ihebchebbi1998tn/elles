@@ -1,4 +1,3 @@
-
 export interface MenuItem {
   title: string;
   image: string;
@@ -40,33 +39,24 @@ export const menuItems: MenuItem[] = [
         description: "Confort et durabilité garantis",
         image: "/VetementDeCuisine/PontalonDeChef.jpg",
         path: "/vetements-cuisine/pantalons"
-      }
-    ]
-  },
-  {
-    title: "Vêtements Boulanger & Pâtissier",
-    image: "/VetementDeBoulanger&patissier/VetementTheBoulangerPattisierBanner.jpg",
-    path: "/vetements-boulanger",
-    topText: "Vêtements",
-    bottomText: "Boulanger & Pâtissier",
-    subItems: [
+      },
       {
         title: "Vestes de Boulanger",
         description: "Tenues adaptées à la boulangerie",
         image: "/VetementDeBoulanger&patissier/VesteDeBoulanger.jpg",
-        path: "/vetements-boulanger/vestes"
+        path: "/vetements-cuisine/vestes-boulanger"
       },
       {
         title: "Tabliers Pro",
         description: "Protection maximale pour pâtissiers",
         image: "/VetementDeBoulanger&patissier/TablierDeBoucher.jpg",
-        path: "/vetements-boulanger/tabliers"
+        path: "/vetements-cuisine/tabliers-pro"
       },
       {
         title: "Vestes Pro Boucher",
         description: "Confort et hygiène pour la boucherie",
         image: "/VetementDeBoulanger&patissier/VesteProBoucher.jpg",
-        path: "/vetements-boulanger/vestes-boucher"
+        path: "/vetements-cuisine/vestes-boucher"
       }
     ]
   },
@@ -146,11 +136,44 @@ export const menuItems: MenuItem[] = [
     ]
   },
   {
-    title: "Produits Marketing",
+    title: "Nos packs Complet",
+    image: "/Packs/PacksBanner.jpg",
+    path: "/nos-packs",
+    topText: "Nos",
+    bottomText: "packs Complet",
+    subItems: [
+      {
+        title: "Pack Restaurant",
+        description: "Solution complète pour restaurant",
+        image: "/Packs/PackRestaurant.jpg",
+        path: "/nos-packs/restaurant"
+      },
+      {
+        title: "Pack Café",
+        description: "Équipement pour café et brasserie",
+        image: "/Packs/PackCafe.jpg",
+        path: "/nos-packs/cafe"
+      },
+      {
+        title: "Pack Hôtel",
+        description: "Tout pour votre établissement hôtelier",
+        image: "/Packs/PackHotel.jpg",
+        path: "/nos-packs/hotel"
+      },
+      {
+        title: "Pack Médecin",
+        description: "Équipement complet pour professionnels de santé",
+        image: "/Packs/PackMedecin.jpg",
+        path: "/nos-packs/medecin"
+      }
+    ]
+  },
+  {
+    title: "Produits Personalisable",
     image: "/ProduitsMarketing/ProduitMarketingBanner.jpg",
     path: "/produits-marketing",
     topText: "Produits",
-    bottomText: "Marketing",
+    bottomText: "Personalisable",
     subItems: [
       {
         title: "Drapeaux",

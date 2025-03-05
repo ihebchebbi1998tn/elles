@@ -565,5 +565,49 @@ export const categoryPagesConfig: Record<string, CategoryPageConfig> = {
     ],
     categoryType: "produits-marketing",
     parentCategory: "Produits Marketing"
+  },
+
+  // Special routes for produits-marketing
+  "produits-marketing/cartes-visite": {
+    title: "Cartes de Visite",
+    description: "Cartes de visite professionnelles personnalisées pour votre entreprise",
+    bannerImage: "/ProduitsMarketing/ProduitMarketingBanner.jpg",
+    features: [
+      {
+        title: "Design Professionnel",
+        description: "Designs modernes et élégants adaptés à votre image de marque"
+      },
+      {
+        title: "Qualité d'Impression",
+        description: "Impression haute définition sur papier premium"
+      },
+      {
+        title: "Personnalisation Complète",
+        description: "Options multiples pour créer des cartes uniques qui vous ressemblent"
+      }
+    ],
+    categoryType: "produits-marketing",
+    parentCategory: "Produits Marketing"
+  },
+  "produits-marketing/carnets-restaurant": {
+    title: "Carnets Restaurant",
+    description: "Solutions personnalisées pour la gestion des commandes en restauration",
+    bannerImage: "/ProduitsMarketing/ProduitMarketingBanner.jpg",
+    features: [
+      {
+        title: "Praticité",
+        description: "Formats adaptés aux besoins spécifiques de la restauration"
+      },
+      {
+        title: "Personnalisation",
+        description: "Intégration de votre logo et de votre identité visuelle"
+      },
+      {
+        title: "Organisation",
+        description: "Structure optimisée pour la prise de commandes efficace"
+      }
+    ],
+    categoryType: "produits-marketing",
+    parentCategory: "Produits Marketing"
   }
 };

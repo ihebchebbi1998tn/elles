@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { HeroSection } from "../components/HeroSection";
 import ProductGrid from "../components/ProductGrid";
 import AboutSection from "../components/AboutSection";
+import VideoSection from "../components/VideoSection";
 import FeaturesSection from "../components/FeaturesSection";
 import FAQ from "../components/FAQ";
 import ReviewSection from "../components/ReviewSection";
 import ProjectGallery from "../components/ProjectGallery";
-import { WelcomeDialog } from "../components/WelcomeDialog";
 import LoadingScreen from "../components/LoadingScreen";
 import { AnimatePresence } from "framer-motion";
 
@@ -31,13 +31,14 @@ const Index = () => {
       </AnimatePresence>
 
       <main className="min-h-screen">
-        <WelcomeDialog />
-        
         {/* Hero Section with improved height */}
         <HeroSection />
         
         {/* About Section */}
         <AboutSection />
+        
+        {/* Video Section */}
+        <VideoSection />
 
         {/* Features Section with gradient background */}
         <div className="bg-gradient-to-b from-white to-gray-50">

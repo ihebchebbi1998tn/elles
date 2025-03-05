@@ -10,6 +10,7 @@ export interface ProductConfig {
   type: string;
   metier_type: string;
   isPersonalizable: boolean;
+  availableColors?: string[];
 }
 
 export const products: ProductConfig[] = [
@@ -23,7 +24,8 @@ export const products: ProductConfig[] = [
     category: "vetements-cuisine",
     type: "vestes",
     metier_type: "Restauration",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#000000", "#ffffff", "#1B2C4B"]
   },
   {
     id: "tablier-cuisine-1",
@@ -34,7 +36,20 @@ export const products: ProductConfig[] = [
     category: "vetements-cuisine",
     type: "tabliers",
     metier_type: "Restauration",
-    isPersonalizable: false
+    isPersonalizable: false,
+    availableColors: ["#000000", "#ffffff"]
+  },
+  {
+    id: "pantalon-cuisine-1",
+    name: "Pantalon de Chef Classic",
+    description: "Pantalon de cuisine confortable et résistant aux taches",
+    startingPrice: "59.99",
+    image: "/CommingSoon.png",
+    category: "vetements-cuisine",
+    type: "pantalons",
+    metier_type: "Restauration",
+    isPersonalizable: false,
+    availableColors: ["#000000", "#1B2C4B"]
   },
 
   // Vêtements Boulanger
@@ -47,7 +62,8 @@ export const products: ProductConfig[] = [
     category: "vetements-boulanger",
     type: "vestes",
     metier_type: "Restauration",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#1B2C4B"]
   },
   {
     id: "tablier-boulanger-1",
@@ -58,7 +74,8 @@ export const products: ProductConfig[] = [
     category: "vetements-boulanger",
     type: "tabliers",
     metier_type: "Restauration",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#000000", "#ffffff", "#1B2C4B"]
   },
 
   // Vêtements Boucher
@@ -71,7 +88,8 @@ export const products: ProductConfig[] = [
     category: "vetements-boucher",
     type: "vestes",
     metier_type: "Industrie",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#DC2626"]
   },
   {
     id: "tablier-boucher-1",
@@ -82,7 +100,20 @@ export const products: ProductConfig[] = [
     category: "vetements-boucher",
     type: "tabliers",
     metier_type: "Industrie",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#000000", "#DC2626"]
+  },
+  {
+    id: "accessoire-boucher-1",
+    name: "Manchette de Protection",
+    description: "Accessoire de protection pour bouchers professionnels",
+    startingPrice: "29.99",
+    image: "/CommingSoon.png",
+    category: "vetements-boucher",
+    type: "accessoires",
+    metier_type: "Industrie",
+    isPersonalizable: false,
+    availableColors: ["#ffffff"]
   },
 
   // Vêtements Esthétique
@@ -95,7 +126,8 @@ export const products: ProductConfig[] = [
     category: "vetements-esthetique",
     type: "blouses",
     metier_type: "Beauté",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#FFDEE2"]
   },
   {
     id: "tunique-esthetique-1",
@@ -106,7 +138,20 @@ export const products: ProductConfig[] = [
     category: "vetements-esthetique",
     type: "tuniques",
     metier_type: "Beauté",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#FFDEE2", "#D3E4FD"]
+  },
+  {
+    id: "accessoire-esthetique-1",
+    name: "Bandeau Spa Pro",
+    description: "Bandeau ajustable pour professionnels de l'esthétique",
+    startingPrice: "19.99",
+    image: "/CommingSoon.png",
+    category: "vetements-esthetique",
+    type: "accessoires",
+    metier_type: "Beauté",
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#FFDEE2"]
   },
 
   // Vêtements Médicaux
@@ -119,7 +164,8 @@ export const products: ProductConfig[] = [
     category: "vetements-medicaux",
     type: "blouses",
     metier_type: "Médical",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#D3E4FD"]
   },
   {
     id: "tunique-medicale-1",
@@ -130,7 +176,20 @@ export const products: ProductConfig[] = [
     category: "vetements-medicaux",
     type: "tuniques",
     metier_type: "Médical",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#D3E4FD", "#E5DEFF"]
+  },
+  {
+    id: "pantalon-medical-1",
+    name: "Pantalon Médical Stretch",
+    description: "Pantalon médical confortable avec taille élastique",
+    startingPrice: "49.99",
+    image: "/CommingSoon.png",
+    category: "vetements-medicaux",
+    type: "pantalons",
+    metier_type: "Médical",
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#D3E4FD"]
   },
 
   // Vêtements Hôtellerie
@@ -141,9 +200,10 @@ export const products: ProductConfig[] = [
     startingPrice: "89.99",
     image: "/CommingSoon.png",
     category: "vetements-hotellerie",
-    type: "vestes",
+    type: "service",
     metier_type: "Transport",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#000000", "#1B2C4B"]
   },
   {
     id: "tablier-hotel-1",
@@ -152,9 +212,22 @@ export const products: ProductConfig[] = [
     startingPrice: "39.99",
     image: "/CommingSoon.png",
     category: "vetements-hotellerie",
-    type: "tabliers",
+    type: "service",
     metier_type: "Transport",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#000000", "#1B2C4B"]
+  },
+  {
+    id: "tenue-accueil-1",
+    name: "Tenue d'Accueil Premium",
+    description: "Ensemble professionnel pour personnel d'accueil",
+    startingPrice: "119.99",
+    image: "/CommingSoon.png",
+    category: "vetements-hotellerie",
+    type: "accueil",
+    metier_type: "Transport",
+    isPersonalizable: true,
+    availableColors: ["#000000", "#1B2C4B"]
   },
 
   // Vêtements de Travail
@@ -167,7 +240,8 @@ export const products: ProductConfig[] = [
     category: "vetements-travail",
     type: "combinaisons",
     metier_type: "Bâtiment",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#000000", "#1B2C4B", "#DC2626"]
   },
   {
     id: "veste-travail-1",
@@ -178,10 +252,47 @@ export const products: ProductConfig[] = [
     category: "vetements-travail",
     type: "vestes",
     metier_type: "Bâtiment",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#000000", "#1B2C4B"]
+  },
+  {
+    id: "blouse-travail-1",
+    name: "Blouse de Laboratoire Premium",
+    description: "Blouse professionnelle pour laboratoires et industries",
+    startingPrice: "65.99",
+    image: "/CommingSoon.png",
+    category: "vetements-travail",
+    type: "blouses",
+    metier_type: "Industrie",
+    isPersonalizable: true,
+    availableColors: ["#ffffff"]
+  },
+  {
+    id: "tunique-travail-1",
+    name: "Tunique Professionnelle",
+    description: "Tunique confortable pour environnement de travail",
+    startingPrice: "59.99",
+    image: "/CommingSoon.png",
+    category: "vetements-travail",
+    type: "tuniques",
+    metier_type: "Industrie",
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#1B2C4B"]
   },
 
   // Chaussures
+  {
+    id: "chaussures-cuisine-1",
+    name: "Chaussures Antidérapantes Cuisine",
+    description: "Chaussures professionnelles pour cuisine, confortables et sécurisées",
+    startingPrice: "79.99",
+    image: "/CommingSoon.png",
+    category: "chaussures",
+    type: "cuisine",
+    metier_type: "Restauration",
+    isPersonalizable: false,
+    availableColors: ["#000000"]
+  },
   {
     id: "chaussures-securite-1",
     name: "Chaussures de Sécurité S3",
@@ -189,9 +300,10 @@ export const products: ProductConfig[] = [
     startingPrice: "89.99",
     image: "/CommingSoon.png",
     category: "chaussures",
-    type: "securite",
+    type: "industrie",
     metier_type: "Sécurité",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#000000", "#1B2C4B"]
   },
   {
     id: "bottes-securite-1",
@@ -200,12 +312,25 @@ export const products: ProductConfig[] = [
     startingPrice: "99.99",
     image: "/CommingSoon.png",
     category: "chaussures",
-    type: "bottes",
+    type: "industrie",
     metier_type: "Sécurité",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#000000", "#DC2626"]
   },
 
   // Produits Marketing
+  {
+    id: "drapeau-marketing-1",
+    name: "Drapeau Publicitaire",
+    description: "Drapeau personnalisable pour votre communication",
+    startingPrice: "49.99",
+    image: "/CommingSoon.png",
+    category: "produits-marketing",
+    type: "drapeaux",
+    metier_type: "Marketing",
+    isPersonalizable: true,
+    availableColors: ["#DC2626", "#ffffff"]
+  },
   {
     id: "mug-marketing-1",
     name: "Mug Personnalisable",
@@ -215,7 +340,8 @@ export const products: ProductConfig[] = [
     category: "produits-marketing",
     type: "mugs",
     metier_type: "Marketing",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#000000", "#ffffff"]
   },
   {
     id: "carnet-marketing-1",
@@ -226,18 +352,8 @@ export const products: ProductConfig[] = [
     category: "produits-marketing",
     type: "carnets",
     metier_type: "Marketing",
-    isPersonalizable: true
-  },
-  {
-    id: "drapeau-marketing-1",
-    name: "Drapeau Publicitaire",
-    description: "Drapeau personnalisable pour votre communication",
-    startingPrice: "49.99",
-    image: "/CommingSoon.png",
-    category: "produits-marketing",
-    type: "drapeaux",
-    metier_type: "Marketing",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#ffffff"]
   },
   {
     id: "sac-marketing-1",
@@ -248,6 +364,76 @@ export const products: ProductConfig[] = [
     category: "produits-marketing",
     type: "sacs",
     metier_type: "Marketing",
-    isPersonalizable: true
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#FFFF00"]
+  },
+
+  // Add new Carte Visites product
+  {
+    id: "carte-visites-1",
+    name: "Cartes de Visite Personnalisées",
+    description: "Cartes de visite professionnelles sur mesure",
+    startingPrice: "29.99",
+    image: "/SubItems/CarteVisites.png",
+    category: "produits-marketing",
+    type: "cartes-visite",
+    metier_type: "Marketing",
+    isPersonalizable: true,
+    availableColors: ["#ffffff"]
+  },
+  
+  // Carnets Personalisables products
+  {
+    id: "notebook-perso-1",
+    name: "Carnet Personnalisable Premium",
+    description: "Carnet haut de gamme personnalisable pour entreprises",
+    startingPrice: "14.99",
+    image: "/SubItems/NotebookPersonalisable.png",
+    category: "produits-marketing",
+    type: "carnets",
+    metier_type: "Marketing",
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#000000"]
+  },
+  
+  // Carnets Restaurant products
+  {
+    id: "notebook-resto-1",
+    name: "Carnet Restaurant Thématique",
+    description: "Carnets personnalisés adaptés au secteur de la restauration",
+    startingPrice: "19.99",
+    image: "/SubItems/NotebookRestaurent.png",
+    category: "produits-marketing",
+    type: "carnets-restaurant",
+    metier_type: "Marketing",
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#1B2C4B"]
+  },
+  
+  // Adding one more product to each new subcategory for better display
+  {
+    id: "carte-visites-2",
+    name: "Cartes de Visite Premium",
+    description: "Cartes de visite premium avec finition de luxe",
+    startingPrice: "39.99",
+    image: "/SubItems/CarteVisites.png",
+    category: "produits-marketing",
+    type: "cartes-visite",
+    metier_type: "Marketing",
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#000000", "#1B2C4B"]
+  },
+  
+  {
+    id: "notebook-resto-2",
+    name: "Carnet Menu Élégant",
+    description: "Carnet menu avec finition élégante pour restaurants haut de gamme",
+    startingPrice: "24.99",
+    image: "/SubItems/NotebookRestaurent.png",
+    category: "produits-marketing",
+    type: "carnets-restaurant",
+    metier_type: "Marketing",
+    isPersonalizable: true,
+    availableColors: ["#ffffff", "#1B2C4B", "#000000"]
   }
 ];

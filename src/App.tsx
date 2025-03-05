@@ -13,6 +13,8 @@ import CategoryPage from './components/categories/CategoryPage';
 import ProductDetail from './pages/ProductDetail';
 import NosPacks from './pages/NosPacks';
 import PackDetail from './pages/packs/PackDetail';
+import BusinessCards from './pages/categories/produits-marketing/BusinessCards';
+import RestaurantNotebooks from './pages/categories/produits-marketing/RestaurantNotebooks';
 
 function App() {
   return (
@@ -31,6 +33,10 @@ function App() {
         {/* Packs Routes */}
         <Route path="/nos-packs" element={<NosPacks />} />
         <Route path="/nos-packs/:packId" element={<PackDetail />} />
+        
+        {/* Special Product Marketing Routes */}
+        <Route path="/produits-marketing/cartes-visite" element={<BusinessCards />} />
+        <Route path="/produits-marketing/carnets-restaurant" element={<RestaurantNotebooks />} />
         
         {/* Subitem routes for categories */}
         <Route path="/vetements-cuisine/vestes" element={<CategoryPage />} />
@@ -54,6 +60,8 @@ function App() {
         <Route path="/produits-marketing/drapeaux" element={<CategoryPage />} />
         <Route path="/produits-marketing/mugs" element={<CategoryPage />} />
         <Route path="/produits-marketing/carnets" element={<CategoryPage />} />
+        <Route path="/produits-marketing/cartes-visite" element={<CategoryPage />} />
+        <Route path="/produits-marketing/carnets-restaurant" element={<CategoryPage />} />
         
         {/* Keep the main category page routes too for backward compatibility */}
         <Route path="/vetements-cuisine" element={<CategoryPage />} />

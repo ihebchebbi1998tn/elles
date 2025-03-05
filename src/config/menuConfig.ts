@@ -1,3 +1,4 @@
+
 export interface MenuItem {
   title: string;
   image: string;
@@ -192,6 +193,18 @@ export const menuItems: MenuItem[] = [
         description: "Carnets et bloc-notes personnalisés",
         image: "/ProduitsMarketing/CarnetPeronalise.jpg",
         path: "/produits-marketing/carnets"
+      },
+      {
+        title: "Cartes de Visite",
+        description: "Cartes de visite professionnelles personnalisées",
+        image: "/SubItems/CarteVisites.png",
+        path: "/produits-marketing/cartes-visite"
+      },
+      {
+        title: "Carnets Restaurant",
+        description: "Solutions sur mesure pour le secteur de la restauration",
+        image: "/SubItems/NotebookRestaurent.png",
+        path: "/produits-marketing/carnets-restaurant"
       }
     ]
   }

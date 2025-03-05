@@ -11,6 +11,8 @@ import {
 } from "@/components/ui/carousel";
 import { useIsMobile } from "@/hooks/use-mobile";
 import Autoplay from "embla-carousel-autoplay";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 interface ProductGridProps {
   onAddToCart: () => void;
@@ -95,12 +97,23 @@ const ProductGrid = ({ onAddToCart, limit, hideCategories = false }: ProductGrid
                       <p className="text-sm text-gray-600 line-clamp-2">{product.description}</p>
                       <div className="flex items-center justify-between">
                         <p className="text-lg font-semibold text-primary">À partir de {product.startingPrice} TND</p>
-                        <button
-                          onClick={() => navigate('/personalization')}
-                          className="rounded-full bg-primary px-4 py-2 text-sm text-white transition-colors hover:bg-primary/90"
-                        >
-                          Personnaliser
-                        </button>
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => navigate('/personalization')}
+                            className="rounded-full bg-primary px-4 py-2 text-sm text-white transition-colors hover:bg-primary/90"
+                          >
+                            Personnaliser
+                          </Button>
+                          <Button
+                            asChild
+                            variant="outline"
+                            className="rounded-full px-4 py-2 text-sm transition-colors"
+                          >
+                            <Link to={`/product/${product.id}`}>
+                              Voir détails
+                            </Link>
+                          </Button>
+                        </div>
                       </div>
                     </div>
                   </div>

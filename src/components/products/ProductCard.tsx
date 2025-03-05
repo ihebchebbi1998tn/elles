@@ -78,7 +78,7 @@ const ProductCard = ({ id, name, description, price, image, isPersonalizable = t
           </div>
           
           <Button asChild size="sm" className="rounded-full px-6">
-            <Link to={isPersonalizable ? "/personalization" : `/product/${id}`}>
+            <Link to={`/product/${id}`}>
               <Eye className="w-4 h-4 mr-2" />
               Voir
             </Link>

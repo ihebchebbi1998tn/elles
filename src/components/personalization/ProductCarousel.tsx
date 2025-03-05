@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { ProductCategory } from "./types";
 import { cn } from "@/lib/utils";
 import { products } from "@/config/products";
+import { Link } from "react-router-dom";
 
 interface ProductCarouselProps {
   categories: ProductCategory[];
@@ -60,19 +61,33 @@ const ProductCarousel = ({
                         {product.description}
                       </p>
                     </div>
-                    <div>
+                    <div className="flex flex-col gap-2">
                       <p className="text-lg font-medium mb-4 text-primary">
                         À partir de {product.startingPrice} TND
                       </p>
-                      <Button
-                        className="w-full bg-primary hover:bg-primary/90 text-white transition-colors"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onCategorySelect(product.id);
-                        }}
-                      >
-                        Personnaliser
-                      </Button>
+                      <div className="grid grid-cols-2 gap-2">
+                        <Button
+                          className="w-full bg-primary hover:bg-primary/90 text-white transition-colors"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onCategorySelect(product.id);
+                          }}
+                        >
+                          Personnaliser
+                        </Button>
+                        <Button
+                          variant="outline"
+                          asChild
+                          className="w-full border-gray-200 hover:bg-gray-50"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                        >
+                          <Link to={`/product/${product.id}`}>
+                            Voir détails
+                          </Link>
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </div>

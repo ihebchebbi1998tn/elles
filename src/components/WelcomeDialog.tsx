@@ -1,3 +1,4 @@
+
 import {
   Dialog,
   DialogContent,
@@ -9,15 +10,11 @@ import { motion } from "framer-motion";
 import { Sparkles } from "lucide-react";
 
 export function WelcomeDialog() {
+  // Set isOpen to false by default to prevent the dialog from showing
   const [isOpen, setIsOpen] = useState(false);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsOpen(true);
-    }, 1000);
-
-    return () => clearTimeout(timer);
-  }, []);
+  // Remove the useEffect that would open the dialog after a timeout
+  // This effectively disables the welcome popup
 
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>

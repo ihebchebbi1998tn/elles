@@ -1,28 +1,103 @@
-
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
 import Image from "@/components/ui/image";
 import { PackConfig, getPackById } from "@/config/packsConfig";
+import { Tag, Info, AlertTriangle } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { toast } from "sonner";
 
 const PackDetail = () => {
   const { packId } = useParams<{ packId: string }>();
   const [packInfo, setPackInfo] = useState<PackConfig | null>(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const pack = getPackById(packId);
-    if (pack) {
-      setPackInfo(pack);
+    if (!packId) {
+      setLoading(false);
+      return;
+    }
+
+    try {
+      console.log("Looking for pack with ID:", packId);
+      const pack = getPackById(packId);
+      console.log("Retrieved pack:", pack);
+      
+      if (pack) {
+        setPackInfo(pack);
+      } else {
+        toast.error("Pack non trouvé", {
+          description: "Le pack demandé n'existe pas ou n'est pas disponible."
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching pack:", error);
+      toast.error("Erreur lors du chargement", {
+        description: "Une erreur est survenue lors du chargement du pack."
+      });
+    } finally {
+      setLoading(false);
     }
   }, [packId]);
 
+  const handleRequestQuote = () => {
+    if (packInfo) {
+      const packDesign = {
+        designNumber: `PACK-${packInfo.id.toUpperCase()}`,
+        productName: packInfo.title,
+        productId: packInfo.id,
+        selectedSize: "Standard",
+        quantity: 1,
+        designs: {},
+        items: packInfo.items.map(item => ({
+          id: item.id,
+          name: item.name,
+          price: item.price
+        }))
+      };
+
+      const existingDesignsString = sessionStorage.getItem('designs');
+      const existingDesigns = existingDesignsString ? JSON.parse(existingDesignsString) : [];
+      
+      const designExists = existingDesigns.some(
+        (design: any) => design.designNumber === packDesign.designNumber
+      );
+      
+      if (!designExists) {
+        const updatedDesigns = [...existingDesigns, packDesign];
+        sessionStorage.setItem('designs', JSON.stringify(updatedDesigns));
+      }
+      
+      navigate('/devis', { state: packDesign });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
+
   if (!packInfo) {
-    return <div className="text-center py-12">Pack non trouvé</div>;
+    return (
+      <div className="max-w-7xl mx-auto px-4 py-12 flex flex-col items-center justify-center min-h-[60vh]">
+        <AlertTriangle className="h-16 w-16 text-amber-500 mb-4" />
+        <h1 className="text-2xl md:text-3xl font-bold mb-2">Pack non trouvé</h1>
+        <p className="text-gray-600 mb-6 text-center">
+          Nous n'avons pas pu trouver le pack que vous recherchez.
+        </p>
+        <Button asChild className="bg-primary">
+          <Link to="/nos-packs">Voir tous nos packs</Link>
+        </Button>
+      </div>
+    );
   }
 
   return (
     <div className="max-w-7xl mx-auto px-4 py-12">
-      {/* Hero Section - Enhanced with gradient overlay and animation */}
       <div className="relative mb-12 rounded-xl overflow-hidden shadow-xl animate-fade-in">
         <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/40 z-10"></div>
         <img 
@@ -35,18 +110,42 @@ const PackDetail = () => {
             {packInfo.title}
           </h1>
           <p className="text-xl max-w-2xl">{packInfo.description}</p>
-          <Button size="lg" className="mt-6 bg-primary hover:bg-primary/90 text-white shadow-lg">
-            Demander un devis
-          </Button>
+          <div className="flex gap-4 mt-6">
+            <Button 
+              size="lg" 
+              variant="outline" 
+              className="bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white border-white/30 shadow-lg"
+              onClick={handleRequestQuote}
+            >
+              Demander un devis
+            </Button>
+          </div>
         </div>
       </div>
 
-      {/* Pack Description - Enhanced with border and better spacing */}
       <div className="bg-white rounded-xl p-8 mb-12 border border-gray-100 shadow-sm">
-        <h2 className="text-3xl font-bold mb-6 text-gray-900 flex items-center gap-2">
-          <span className="w-2 h-8 bg-primary rounded-full inline-block"></span>
-          Notre solution pour vous
-        </h2>
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 pb-6 border-b border-gray-100">
+          <div>
+            <h2 className="text-3xl font-bold text-gray-900 mb-2 flex items-center gap-2">
+              <span className="w-2 h-8 bg-primary rounded-full inline-block"></span>
+              {packInfo.title}
+            </h2>
+            <p className="text-gray-600">Solution complète pour professionnels</p>
+          </div>
+          <div className="mt-4 md:mt-0">
+            <div className="flex items-center gap-2">
+              <span className="text-3xl font-bold text-primary">À partir de 100 TND</span>
+              {packInfo.discount && (
+                <>
+                  <Badge variant="outline" className="bg-green-50 text-green-700 border-green-200 ml-2">
+                    {packInfo.discount} d'économie
+                  </Badge>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+
         <div className="grid md:grid-cols-2 gap-8">
           <div className="space-y-4">
             <p className="text-gray-700 text-lg leading-relaxed">
@@ -86,7 +185,6 @@ const PackDetail = () => {
         </div>
       </div>
 
-      {/* Pack Items - Enhanced card design and hover effects */}
       <div className="mb-16">
         <h2 className="text-3xl font-bold mb-8 text-center">
           <span className="relative">
@@ -95,40 +193,62 @@ const PackDetail = () => {
           </span>
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {packInfo.items.map((item) => (
-            <div 
-              key={item.id} 
-              className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 bg-white"
-            >
-              <div className="h-48 overflow-hidden">
-                <Image 
-                  src={item.image} 
-                  alt={item.name} 
-                  className="w-full h-full object-cover transition-transform hover:scale-110 duration-500" 
-                />
-              </div>
-              <div className="p-5">
-                <h3 className="font-semibold text-lg text-gray-900">{item.name}</h3>
-                <p className="text-gray-600 mt-1">{item.description}</p>
-                <div className="mt-4 pt-4 border-t border-gray-100">
-                  <Button variant="outline" size="sm" className="w-full">
-                    Voir détails
-                  </Button>
+          {packInfo.items && packInfo.items.length > 0 ? (
+            packInfo.items.map((item) => (
+              <div 
+                key={item.id} 
+                className="border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 bg-white"
+              >
+                <div className="h-48 overflow-hidden">
+                  <Image 
+                    src={item.image} 
+                    alt={item.name} 
+                    className="w-full h-full object-cover transition-transform hover:scale-110 duration-500" 
+                  />
+                </div>
+                <div className="p-5">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="font-semibold text-lg text-gray-900">{item.name}</h3>
+                    {item.isPersonalizable && (
+                      <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                        Personnalisable
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-gray-600 mt-1 mb-3">{item.description}</p>
+                  <div className="flex justify-between items-center mb-4">
+                    <span className="font-semibold text-primary">À partir de {item.price} TND</span>
+                    <span className="text-sm text-gray-500 flex items-center">
+                      <Info className="h-3 w-3 mr-1" /> Inclus dans le pack
+                    </span>
+                  </div>
+                  <div className="pt-4 border-t border-gray-100">
+                    <Button asChild variant="outline" size="sm" className="w-full">
+                      <Link to={`/product/${item.id}`}>Voir détails</Link>
+                    </Button>
+                  </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="col-span-full text-center py-8">
+              <p className="text-gray-500">Aucun article trouvé dans ce pack.</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
 
-      {/* CTA Section - Enhanced with gradient background and better spacing */}
       <div className="bg-gradient-to-r from-secondary/10 to-primary/10 rounded-xl p-10 text-center shadow-sm">
         <h2 className="text-3xl font-bold mb-4 text-gray-900">Prêt à équiper votre établissement?</h2>
         <p className="text-gray-700 mb-8 max-w-2xl mx-auto text-lg">
           Contactez-nous dès aujourd'hui pour obtenir un devis personnalisé adapté à vos besoins spécifiques.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button size="lg" className="bg-primary hover:bg-primary/90 text-white px-8">
+          <Button 
+            size="lg" 
+            className="bg-primary hover:bg-primary/90 text-white px-8"
+            onClick={handleRequestQuote}
+          >
             Demander un devis
           </Button>
           <Button variant="outline" size="lg" className="border-gray-300 hover:bg-gray-50">

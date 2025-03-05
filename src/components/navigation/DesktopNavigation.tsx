@@ -13,10 +13,10 @@ const DesktopNavigation: React.FC = () => {
 
   return (
     <div className="hidden md:block border-t">
-      <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between py-3 max-w-[1400px] mx-auto">
-          <NavigationMenu className="-ml-12">
-            <NavigationMenuList>
+      <div className="container mx-auto px-2 lg:px-4">
+        <div className="flex items-center justify-between py-2 md:py-3 max-w-[1400px] mx-auto">
+          <NavigationMenu className="relative -ml-4 md:-ml-12">
+            <NavigationMenuList className="flex items-center gap-1">
               {menuItems.map((item, index) => (
                 <CategoryLink 
                   key={index}
@@ -29,16 +29,16 @@ const DesktopNavigation: React.FC = () => {
             </NavigationMenuList>
           </NavigationMenu>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             <button
               onClick={() => navigate('/personalization')}
-              className="px-6 py-2.5 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium flex items-center gap-2"
+              className="px-3 md:px-6 py-2 md:py-2.5 border border-gray-300 rounded-md hover:bg-gray-50 transition-colors text-xs md:text-sm font-medium flex items-center gap-2"
             >
               <span>Personalisation</span>
             </button>
             <button
               onClick={() => navigate('/metiers')}
-              className="px-6 py-2.5 bg-[#FFD700] text-black rounded-md hover:bg-[#FFD700]/90 transition-colors text-sm font-medium shadow-sm flex items-center gap-2"
+              className="px-3 md:px-6 py-2 md:py-2.5 bg-[#FFD700] text-black rounded-md hover:bg-[#FFD700]/90 transition-colors text-xs md:text-sm font-medium shadow-sm flex items-center gap-2"
             >
               <span>MÉTIERS</span>
             </button>
